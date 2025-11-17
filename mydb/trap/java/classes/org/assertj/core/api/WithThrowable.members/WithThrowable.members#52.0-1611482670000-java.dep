@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/WithThrowable.members/WithThrowable.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/WithThrowable.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/org/assertj/core/api/ThrowableAssertAlternative.members.trap.gz
+classes/org/assertj/core/api/AbstractAssert.members.trap.gz
+classes/org/assertj/core/api/Assert.members.trap.gz
+classes/org/assertj/core/api/Descriptable.members.trap.gz
+classes/org/assertj/core/api/ExtensionPoints.members.trap.gz

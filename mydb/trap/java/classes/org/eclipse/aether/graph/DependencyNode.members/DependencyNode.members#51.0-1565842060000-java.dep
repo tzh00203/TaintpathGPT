@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/graph/DependencyNode.members/DependencyNode.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/graph/DependencyNode.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/graph/DependencyVisitor.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz
+classes/java/lang/Boolean.members.trap.gz
+classes/org/eclipse/aether/version/Version.members.trap.gz
+classes/org/eclipse/aether/version/VersionConstraint.members.trap.gz
+classes/org/eclipse/aether/artifact/Artifact.members.trap.gz
+classes/org/eclipse/aether/graph/Dependency.members.trap.gz

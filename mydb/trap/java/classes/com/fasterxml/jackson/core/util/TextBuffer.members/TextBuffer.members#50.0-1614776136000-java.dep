@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/fasterxml/jackson/core/util/TextBuffer.members/TextBuffer.members#50.0-1614776136000-java.trap.gz
+
+TRAPS
+classes/com/fasterxml/jackson/core/util/TextBuffer.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/io/Writer.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/lang/NumberFormatException.members.trap.gz
+classes/java/math/BigDecimal.members.trap.gz
+classes/com/fasterxml/jackson/core/util/BufferRecycler.members.trap.gz

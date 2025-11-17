@@ -1,0 +1,18 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/Uris.members/Uris.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/Uris.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/java/net/URI.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Integer.members.trap.gz
+classes/org/assertj/core/internal/Failures.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz

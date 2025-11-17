@@ -1,0 +1,23 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/junit/jupiter/params/provider/MethodArgumentsProvider.members/MethodArgumentsProvider.members#52.0-318182400000-java.trap.gz
+
+TRAPS
+classes/org/junit/jupiter/params/provider/MethodArgumentsProvider.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/params/provider/ArgumentsProvider.members.trap.gz
+classes/org/junit/jupiter/params/provider/MethodSource.members.trap.gz
+classes/org/junit/jupiter/params/support/AnnotationConsumer.members.trap.gz
+classes/java/util/function/Consumer.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/apiguardian/api/API.members.trap.gz
+classes/org/apiguardian/api/API$Status.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/junit/jupiter/api/extension/ExtensionContext.members.trap.gz
+classes/java/util/stream/Stream.members.trap.gz
+classes/java/util/stream/BaseStream.members.trap.gz
+classes/java/lang/AutoCloseable.members.trap.gz
+classes/org/junit/jupiter/params/provider/Arguments.members.trap.gz

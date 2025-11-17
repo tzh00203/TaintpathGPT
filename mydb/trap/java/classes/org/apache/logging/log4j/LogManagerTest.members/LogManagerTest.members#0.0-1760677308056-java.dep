@@ -1,0 +1,13 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/LogManagerTest.members/LogManagerTest.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/LogManagerTest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceLock.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceAccessMode.members.trap.gz
+classes/org/junit/jupiter/api/Test.members.trap.gz
+classes/java/io/IOException.members.trap.gz

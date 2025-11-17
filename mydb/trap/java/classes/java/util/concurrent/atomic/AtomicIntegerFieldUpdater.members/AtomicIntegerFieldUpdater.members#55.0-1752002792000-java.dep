@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/concurrent/atomic/AtomicIntegerFieldUpdater.members/AtomicIntegerFieldUpdater.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/concurrent/atomic/AtomicIntegerFieldUpdater.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/function/IntBinaryOperator.members.trap.gz
+classes/java/util/function/IntUnaryOperator.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/jdk/internal/reflect/CallerSensitive.members.trap.gz

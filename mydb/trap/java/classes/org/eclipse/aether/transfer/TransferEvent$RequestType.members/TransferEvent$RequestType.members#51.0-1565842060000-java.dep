@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/transfer/TransferEvent$RequestType.members/TransferEvent$RequestType.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/transfer/TransferEvent$RequestType.members.trap.gz
+classes/java/lang/Enum.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Comparable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/CloneNotSupportedException.members.trap.gz
+classes/org/eclipse/aether/transfer/TransferEvent.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz

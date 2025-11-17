@@ -1,0 +1,39 @@
+---
+sourceLocationPrefix: /data_hdd/tzh24/zgc4/projects/tools/iris/data/project-sources/match_java_3_CVE-2021-44228_1.0.0
+baselineLinesOfCode: 168636
+unicodeNewlines: false
+columnKind: utf16
+primaryLanguage: java
+inProgress:
+  primaryLanguage: java
+  installedExtractors:
+    go:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/go
+    python:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/python
+    swift:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/swift
+    ruby:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/ruby
+    cpp:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/cpp
+    yaml:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/yaml
+    csharp:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/csharp
+    java:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/java
+    javascript:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/javascript
+    properties:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/properties
+    xml:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/xml
+    csv:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/csv
+    html:
+     - /data_hdd/tzh24/zgc4/projects/tools/iris/codeql/html
+creationMetadata:
+  cliVersion: 2.15.5
+  creationTime: 2025-10-17T06:18:47.816213257Z
+finalised: false

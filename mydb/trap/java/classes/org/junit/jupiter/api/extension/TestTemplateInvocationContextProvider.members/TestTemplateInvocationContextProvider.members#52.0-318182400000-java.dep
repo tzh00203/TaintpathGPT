@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/junit/jupiter/api/extension/TestTemplateInvocationContextProvider.members/TestTemplateInvocationContextProvider.members#52.0-318182400000-java.trap.gz
+
+TRAPS
+classes/org/junit/jupiter/api/extension/TestTemplateInvocationContextProvider.members.trap.gz
+classes/org/junit/jupiter/api/extension/Extension.members.trap.gz
+classes/org/apiguardian/api/API.members.trap.gz
+classes/org/apiguardian/api/API$Status.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/junit/jupiter/api/extension/ExtensionContext.members.trap.gz
+classes/java/util/stream/Stream.members.trap.gz
+classes/java/util/stream/BaseStream.members.trap.gz
+classes/java/lang/AutoCloseable.members.trap.gz
+classes/org/junit/jupiter/api/extension/TestTemplateInvocationContext.members.trap.gz

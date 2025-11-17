@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/LogManagerTest$StaticInner.members/LogManagerTest$StaticInner.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/LogManagerTest$StaticInner.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/LogManagerTest.members.trap.gz
+classes/org/apache/logging/log4j/Logger.members.trap.gz

@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/IndexedStringMap.members/IndexedStringMap.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/IndexedStringMap.members.trap.gz
+classes/org/apache/logging/log4j/util/IndexedReadOnlyStringMap.members.trap.gz
+classes/org/apache/logging/log4j/util/StringMap.members.trap.gz

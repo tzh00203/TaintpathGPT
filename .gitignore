@@ -10,3 +10,4 @@ data/build-info/
 data/project-sources
 log/
 config.json
+test/

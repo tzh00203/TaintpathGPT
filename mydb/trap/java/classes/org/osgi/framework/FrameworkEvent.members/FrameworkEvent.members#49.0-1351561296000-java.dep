@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/FrameworkEvent.members/FrameworkEvent.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/FrameworkEvent.members.trap.gz
+classes/java/util/EventObject.members.trap.gz
+classes/org/osgi/framework/Bundle.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/Object.members.trap.gz

@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/fasterxml/jackson/core/util/BufferRecycler.members/BufferRecycler.members#50.0-1614776136000-java.trap.gz
+
+TRAPS
+classes/com/fasterxml/jackson/core/util/BufferRecycler.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/util/concurrent/atomic/AtomicReferenceArray.members.trap.gz

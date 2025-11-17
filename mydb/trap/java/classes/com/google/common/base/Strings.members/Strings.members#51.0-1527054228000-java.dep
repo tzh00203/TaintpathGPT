@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/google/common/base/Strings.members/Strings.members#51.0-1527054228000-java.trap.gz
+
+TRAPS
+classes/com/google/common/base/Strings.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/com/google/common/annotations/GwtCompatible.members.trap.gz
+classes/java/lang/CharSequence.members.trap.gz
+classes/com/google/common/annotations/VisibleForTesting.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/checkerframework/checker/nullness/compatqual/NullableDecl.members.trap.gz

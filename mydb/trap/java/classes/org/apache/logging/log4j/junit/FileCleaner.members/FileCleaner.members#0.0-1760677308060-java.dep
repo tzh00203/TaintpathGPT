@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/junit/FileCleaner.members/FileCleaner.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/junit/FileCleaner.members.trap.gz
+classes/org/apache/logging/log4j/junit/AbstractFileCleaner.members.trap.gz
+classes/java/nio/file/Path.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/org/junit/jupiter/api/extension/ExtensionContext.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Object.members.trap.gz

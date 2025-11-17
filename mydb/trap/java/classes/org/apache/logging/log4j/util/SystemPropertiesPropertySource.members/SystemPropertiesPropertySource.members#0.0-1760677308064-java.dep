@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySource.members/SystemPropertiesPropertySource.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySource.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/util/PropertySource.members.trap.gz
+classes/java/lang/CharSequence.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/util/BiConsumer.members.trap.gz

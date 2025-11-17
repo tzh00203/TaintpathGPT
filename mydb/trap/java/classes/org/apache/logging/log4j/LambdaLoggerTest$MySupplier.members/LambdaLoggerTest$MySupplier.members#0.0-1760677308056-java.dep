@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/LambdaLoggerTest$MySupplier.members/LambdaLoggerTest$MySupplier.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/LambdaLoggerTest$MySupplier.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/util/Supplier.members.trap.gz
+classes/org/apache/logging/log4j/LambdaLoggerTest.members.trap.gz
+classes/java/lang/Override.members.trap.gz

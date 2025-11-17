@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/fasterxml/jackson/databind/JsonSerializable$Base.members/JsonSerializable$Base.members#51.0-1614777666000-java.trap.gz
+
+TRAPS
+classes/com/fasterxml/jackson/databind/JsonSerializable$Base.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/com/fasterxml/jackson/databind/JsonSerializable.members.trap.gz
+classes/com/fasterxml/jackson/databind/SerializerProvider.members.trap.gz

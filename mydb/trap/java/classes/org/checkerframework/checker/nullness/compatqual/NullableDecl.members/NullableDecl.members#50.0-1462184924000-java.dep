@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/checkerframework/checker/nullness/compatqual/NullableDecl.members/NullableDecl.members#50.0-1462184924000-java.trap.gz
+
+TRAPS
+classes/org/checkerframework/checker/nullness/compatqual/NullableDecl.members.trap.gz
+classes/java/lang/annotation/Annotation.members.trap.gz
+classes/java/lang/annotation/Documented.members.trap.gz
+classes/java/lang/annotation/Retention.members.trap.gz
+classes/java/lang/annotation/RetentionPolicy.members.trap.gz

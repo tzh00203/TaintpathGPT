@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/artifact/versioning/Restriction.members/Restriction.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/artifact/versioning/Restriction.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/maven/artifact/versioning/ArtifactVersion.members.trap.gz

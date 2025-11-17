@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/ThreadContextInheritanceTest$TestThread.members/ThreadContextInheritanceTest$TestThread.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/ThreadContextInheritanceTest$TestThread.members.trap.gz
+classes/java/lang/Thread.members.trap.gz
+classes/org/apache/logging/log4j/ThreadContextInheritanceTest.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/lang/StringBuilder.members.trap.gz

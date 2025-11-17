@@ -1,0 +1,18 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/hamcrest/core/AnyOf.members/AnyOf.members#49.0-1341838182000-java.trap.gz
+
+TRAPS
+classes/org/hamcrest/core/AnyOf.members.trap.gz
+classes/org/hamcrest/core/ShortcutCombination.members.trap.gz
+classes/org/hamcrest/BaseMatcher.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/hamcrest/Matcher.members.trap.gz
+classes/org/hamcrest/SelfDescribing.members.trap.gz
+classes/org/hamcrest/Description.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/hamcrest/Factory.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz

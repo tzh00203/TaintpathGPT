@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/hamcrest/MatcherAssert.members/MatcherAssert.members#49.0-1341838182000-java.trap.gz
+
+TRAPS
+classes/org/hamcrest/MatcherAssert.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/hamcrest/Matcher.members.trap.gz
+classes/org/hamcrest/SelfDescribing.members.trap.gz

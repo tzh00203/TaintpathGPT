@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/codehaus/plexus/classworlds/strategy/Strategy.members/Strategy.members#51.0-1545996064000-java.trap.gz
+
+TRAPS
+classes/org/codehaus/plexus/classworlds/strategy/Strategy.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/codehaus/plexus/classworlds/realm/ClassRealm.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Enumeration.members.trap.gz
+classes/java/net/URL.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/java/lang/ClassNotFoundException.members.trap.gz

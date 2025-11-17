@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/codehaus/plexus/classworlds/ClassWorldListener.members/ClassWorldListener.members#51.0-1545996064000-java.trap.gz
+
+TRAPS
+classes/org/codehaus/plexus/classworlds/ClassWorldListener.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/codehaus/plexus/classworlds/realm/ClassRealm.members.trap.gz

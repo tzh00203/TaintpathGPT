@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/MessageCollectionMessage.members/MessageCollectionMessage.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/MessageCollectionMessage.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/Spliterator.members.trap.gz
+classes/java/util/function/Consumer.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/util/Iterator.members.trap.gz

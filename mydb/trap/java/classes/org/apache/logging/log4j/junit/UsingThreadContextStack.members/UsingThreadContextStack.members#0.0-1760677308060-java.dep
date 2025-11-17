@@ -1,0 +1,27 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/junit/UsingThreadContextStack.members/UsingThreadContextStack.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/junit/UsingThreadContextStack.members.trap.gz
+classes/java/lang/annotation/Annotation.members.trap.gz
+classes/java/lang/annotation/Documented.members.trap.gz
+classes/java/lang/annotation/Inherited.members.trap.gz
+classes/java/lang/annotation/Retention.members.trap.gz
+classes/java/lang/annotation/RetentionPolicy.members.trap.gz
+classes/java/lang/annotation/Target.members.trap.gz
+classes/java/lang/annotation/ElementType.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/junit/jupiter/api/extension/ExtendWith.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/org/junit/jupiter/api/extension/Extension.members.trap.gz
+classes/org/apache/logging/log4j/junit/ThreadContextExtension.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceLock.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceAccessMode.members.trap.gz

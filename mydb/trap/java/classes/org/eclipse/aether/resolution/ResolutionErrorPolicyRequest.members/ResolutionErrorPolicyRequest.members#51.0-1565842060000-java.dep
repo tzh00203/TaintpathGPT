@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/resolution/ResolutionErrorPolicyRequest.members/ResolutionErrorPolicyRequest.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/resolution/ResolutionErrorPolicyRequest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz

@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/wiring/BundleRevision.members/BundleRevision.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/wiring/BundleRevision.members.trap.gz
+classes/org/osgi/framework/BundleReference.members.trap.gz
+classes/org/osgi/framework/wiring/BundleWiring.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/osgi/framework/wiring/BundleRequirement.members.trap.gz
+classes/org/osgi/framework/wiring/BundleCapability.members.trap.gz
+classes/org/osgi/framework/Version.members.trap.gz

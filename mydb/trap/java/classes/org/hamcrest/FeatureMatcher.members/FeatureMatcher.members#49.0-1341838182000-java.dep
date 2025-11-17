@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/hamcrest/FeatureMatcher.members/FeatureMatcher.members#49.0-1341838182000-java.trap.gz
+
+TRAPS
+classes/org/hamcrest/FeatureMatcher.members.trap.gz
+classes/org/hamcrest/TypeSafeDiagnosingMatcher.members.trap.gz
+classes/org/hamcrest/BaseMatcher.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/hamcrest/Matcher.members.trap.gz
+classes/org/hamcrest/SelfDescribing.members.trap.gz
+classes/org/hamcrest/Description.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/hamcrest/internal/ReflectiveTypeFinder.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz

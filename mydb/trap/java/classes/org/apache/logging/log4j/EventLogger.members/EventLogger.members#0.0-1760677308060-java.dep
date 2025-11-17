@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/EventLogger.members/EventLogger.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/EventLogger.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/message/StructuredDataMessage.members.trap.gz
+classes/org/apache/logging/log4j/Level.members.trap.gz
+classes/org/apache/logging/log4j/Marker.members.trap.gz

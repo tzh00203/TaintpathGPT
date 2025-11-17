@@ -1,0 +1,18 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/concurrent/locks/ReentrantReadWriteLock.members/ReentrantReadWriteLock.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/concurrent/locks/ReentrantReadWriteLock.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/concurrent/locks/ReadWriteLock.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/concurrent/locks/Condition.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Thread.members.trap.gz
+classes/java/util/concurrent/locks/ReentrantReadWriteLock$ReadLock.members.trap.gz
+classes/java/util/concurrent/locks/ReentrantReadWriteLock$WriteLock.members.trap.gz
+classes/java/util/concurrent/locks/ReentrantReadWriteLock$Sync.members.trap.gz

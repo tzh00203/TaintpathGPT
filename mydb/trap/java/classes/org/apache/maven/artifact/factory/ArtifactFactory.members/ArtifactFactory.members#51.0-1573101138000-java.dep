@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/artifact/factory/ArtifactFactory.members/ArtifactFactory.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/artifact/factory/ArtifactFactory.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/maven/artifact/versioning/VersionRange.members.trap.gz
+classes/org/apache/maven/artifact/Artifact.members.trap.gz

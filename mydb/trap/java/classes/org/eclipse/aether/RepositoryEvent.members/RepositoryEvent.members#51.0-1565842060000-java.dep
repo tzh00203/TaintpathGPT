@@ -1,0 +1,21 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/RepositoryEvent.members/RepositoryEvent.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/RepositoryEvent.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/eclipse/aether/RequestTrace.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Exception.members.trap.gz
+classes/org/eclipse/aether/repository/ArtifactRepository.members.trap.gz
+classes/java/io/File.members.trap.gz
+classes/org/eclipse/aether/metadata/Metadata.members.trap.gz
+classes/org/eclipse/aether/artifact/Artifact.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz
+classes/org/eclipse/aether/RepositoryEvent$EventType.members.trap.gz
+classes/org/eclipse/aether/RepositoryEvent$Builder.members.trap.gz

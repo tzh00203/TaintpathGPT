@@ -34,6 +34,11 @@ def fetch_project(project_slug, from_container=False, verbose=False):
     # Check if project already exists
     if target_dir.exists():
         print(f"[fetch_one] Skipping: {target_dir} already exists")
+        fetch_cmd = ["python3", f"{ROOT_DIR}/scripts/get_packages_codeql.py", project_slug, "--internal-package", "org.keycloak"]   
+        result = subprocess.run(fetch_cmd)
+        if result.returncode != 0:
+            print(f"[fetch_one] Failed to get packages for {project_slug}")
+            return False
         return True
 
     if from_container:

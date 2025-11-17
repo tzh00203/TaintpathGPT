@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/Double2DArrays.members/Double2DArrays.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/Double2DArrays.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/assertj/core/data/Index.members.trap.gz
+classes/org/assertj/core/internal/Arrays2D.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz
+classes/org/assertj/core/internal/Failures.members.trap.gz

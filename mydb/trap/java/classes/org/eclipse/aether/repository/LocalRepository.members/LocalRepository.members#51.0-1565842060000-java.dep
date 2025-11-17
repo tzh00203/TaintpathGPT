@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/LocalRepository.members/LocalRepository.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/LocalRepository.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/repository/ArtifactRepository.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/io/File.members.trap.gz

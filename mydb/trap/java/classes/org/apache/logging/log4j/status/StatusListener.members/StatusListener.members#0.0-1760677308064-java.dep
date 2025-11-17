@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/status/StatusListener.members/StatusListener.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/status/StatusListener.members.trap.gz
+classes/java/io/Closeable.members.trap.gz
+classes/java/util/EventListener.members.trap.gz
+classes/org/apache/logging/log4j/Level.members.trap.gz
+classes/org/apache/logging/log4j/status/StatusData.members.trap.gz

@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/fasterxml/jackson/core/TSFBuilder.members/TSFBuilder.members#50.0-1614776136000-java.trap.gz
+
+TRAPS
+classes/com/fasterxml/jackson/core/TSFBuilder.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/com/fasterxml/jackson/core/JsonFactory.members.trap.gz
+classes/com/fasterxml/jackson/core/JsonGenerator$Feature.members.trap.gz
+classes/com/fasterxml/jackson/core/JsonParser$Feature.members.trap.gz
+classes/com/fasterxml/jackson/core/io/OutputDecorator.members.trap.gz
+classes/com/fasterxml/jackson/core/io/InputDecorator.members.trap.gz
+classes/com/fasterxml/jackson/core/json/JsonWriteFeature.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/com/fasterxml/jackson/core/json/JsonReadFeature.members.trap.gz
+classes/com/fasterxml/jackson/core/StreamWriteFeature.members.trap.gz
+classes/com/fasterxml/jackson/core/StreamReadFeature.members.trap.gz
+classes/com/fasterxml/jackson/core/JsonFactory$Feature.members.trap.gz

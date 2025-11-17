@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/AuthenticationContext.members/AuthenticationContext.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/AuthenticationContext.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Closeable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/org/eclipse/aether/repository/Proxy.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz

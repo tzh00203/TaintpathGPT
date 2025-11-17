@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/model/building/ModelProblem.members/ModelProblem.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/model/building/ModelProblem.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/maven/model/building/ModelProblem$Version.members.trap.gz
+classes/org/apache/maven/model/building/ModelProblem$Severity.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Exception.members.trap.gz

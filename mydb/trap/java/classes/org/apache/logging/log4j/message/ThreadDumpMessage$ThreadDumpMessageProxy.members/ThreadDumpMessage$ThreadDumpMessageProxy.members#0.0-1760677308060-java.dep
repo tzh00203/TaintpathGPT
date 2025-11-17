@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/ThreadDumpMessage$ThreadDumpMessageProxy.members/ThreadDumpMessage$ThreadDumpMessageProxy.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/ThreadDumpMessage$ThreadDumpMessageProxy.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/apache/logging/log4j/message/ThreadDumpMessage.members.trap.gz

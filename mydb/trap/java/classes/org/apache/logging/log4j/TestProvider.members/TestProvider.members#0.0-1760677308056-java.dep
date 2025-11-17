@@ -1,0 +1,8 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/TestProvider.members/TestProvider.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/TestProvider.members.trap.gz
+classes/org/apache/logging/log4j/spi/Provider.members.trap.gz

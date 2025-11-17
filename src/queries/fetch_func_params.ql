@@ -25,7 +25,12 @@ predicate isNotInvokedByInternalFunction(Callable m) {
 
 bindingset[m]
 string paramTypes(Callable m) {
-    result = concat(int i | i = [0 .. m.getNumberOfParameters()] | m.getParameter(i).getType().getName(), ";" order by i asc)
+    if m.hasNoParameters()
+    then
+        result = ""
+    else
+        result = concat(int i | i = [0 .. m.getNumberOfParameters()] | 
+                 m.getParameter(i).getType().getName(), ";" order by i asc)
 }
 
 bindingset[m]
@@ -41,10 +46,11 @@ from
     Callable method
 where
     method.fromSource() and
-    method.isPublic() and
-    not method.hasNoParameters() and
-    isTested(method) and
-    isNotInvokedByInternalFunction(method)
+    method.isPublic() 
+    // TODO not no-arg methods? 
+    // not method.hasNoParameters()
+    // isTested(method) and
+    // isNotInvokedByInternalFunction(method)
 select
     method.getDeclaringType().getSourceDeclaration().getPackage() as package,
     method.getDeclaringType().getSourceDeclaration() as clazz,

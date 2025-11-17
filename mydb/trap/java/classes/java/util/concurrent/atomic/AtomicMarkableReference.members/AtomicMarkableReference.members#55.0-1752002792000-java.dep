@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/concurrent/atomic/AtomicMarkableReference.members/AtomicMarkableReference.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/concurrent/atomic/AtomicMarkableReference.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz

@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/InstanceOfAssertFactory.members/InstanceOfAssertFactory.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/InstanceOfAssertFactory.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/AssertFactory.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/assertj/core/api/Assert.members.trap.gz
+classes/org/assertj/core/api/Descriptable.members.trap.gz
+classes/org/assertj/core/api/ExtensionPoints.members.trap.gz
+classes/org/assertj/core/api/AbstractAssert.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz

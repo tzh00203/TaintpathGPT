@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/regex/Pattern$GroupTail.members/Pattern$GroupTail.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/regex/Pattern$GroupTail.members.trap.gz
+classes/java/util/regex/Pattern$Node.members.trap.gz
+classes/java/util/regex/Pattern.members.trap.gz
+classes/java/util/regex/Matcher.members.trap.gz
+classes/java/lang/CharSequence.members.trap.gz

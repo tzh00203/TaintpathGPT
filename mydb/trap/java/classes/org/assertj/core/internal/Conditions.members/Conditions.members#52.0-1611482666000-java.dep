@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/Conditions.members/Conditions.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/Conditions.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/Condition.members.trap.gz
+classes/org/assertj/core/api/Descriptable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz
+classes/org/assertj/core/internal/Failures.members.trap.gz

@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/io/ObjectInputFilter.members/ObjectInputFilter.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/io/ObjectInputFilter.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/io/ObjectInputFilter$FilterInfo.members.trap.gz
+classes/java/io/ObjectInputFilter$Status.members.trap.gz

@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/codehaus/plexus/util/xml/pull/XmlSerializer.members/XmlSerializer.members#50.0-1570807712000-java.trap.gz
+
+TRAPS
+classes/org/codehaus/plexus/util/xml/pull/XmlSerializer.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/IllegalArgumentException.members.trap.gz
+classes/java/lang/IllegalStateException.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Boolean.members.trap.gz
+classes/java/io/Writer.members.trap.gz
+classes/java/io/OutputStream.members.trap.gz

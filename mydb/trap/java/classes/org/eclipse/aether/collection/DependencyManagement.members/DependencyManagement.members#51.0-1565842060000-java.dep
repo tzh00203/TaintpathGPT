@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/collection/DependencyManagement.members/DependencyManagement.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/collection/DependencyManagement.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/org/eclipse/aether/graph/Exclusion.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Boolean.members.trap.gz

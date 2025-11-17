@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/lang/Math.members/Math.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/lang/Math.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/jdk/internal/HotSpotIntrinsicCandidate.members.trap.gz

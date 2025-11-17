@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/AdminPermission.members/AdminPermission.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/AdminPermission.members.trap.gz
+classes/java/security/BasicPermission.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/security/PermissionCollection.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/security/Permission.members.trap.gz
+classes/org/osgi/framework/Filter.members.trap.gz
+classes/org/osgi/framework/Bundle.members.trap.gz

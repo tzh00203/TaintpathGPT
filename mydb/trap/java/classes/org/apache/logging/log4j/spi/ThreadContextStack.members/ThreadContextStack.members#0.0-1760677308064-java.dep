@@ -1,0 +1,8 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/ThreadContextStack.members/ThreadContextStack.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/ThreadContextStack.members.trap.gz
+classes/org/apache/logging/log4j/ThreadContext$ContextStack.members.trap.gz

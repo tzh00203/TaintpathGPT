@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/nio/file/SimpleFileVisitor.members/SimpleFileVisitor.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/nio/file/SimpleFileVisitor.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/nio/file/FileVisitor.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/nio/file/FileVisitResult.members.trap.gz
+classes/java/nio/file/attribute/BasicFileAttributes.members.trap.gz

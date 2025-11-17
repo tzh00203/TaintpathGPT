@@ -1,0 +1,18 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/MessageFormatMessageSerializationTest.members/MessageFormatMessageSerializationTest.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/MessageFormatMessageSerializationTest.members.trap.gz
+classes/org/apache/logging/log4j/AbstractSerializationTest.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceLock.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceAccessMode.members.trap.gz
+classes/org/apache/logging/log4j/message/MessageFormatMessage.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/junit/runners/Parameterized$Parameters.members.trap.gz

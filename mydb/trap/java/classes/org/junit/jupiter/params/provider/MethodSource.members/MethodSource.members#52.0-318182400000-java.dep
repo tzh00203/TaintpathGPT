@@ -1,0 +1,25 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/junit/jupiter/params/provider/MethodSource.members/MethodSource.members#52.0-318182400000-java.trap.gz
+
+TRAPS
+classes/org/junit/jupiter/params/provider/MethodSource.members.trap.gz
+classes/java/lang/annotation/Annotation.members.trap.gz
+classes/java/lang/annotation/Documented.members.trap.gz
+classes/java/lang/annotation/Retention.members.trap.gz
+classes/java/lang/annotation/RetentionPolicy.members.trap.gz
+classes/java/lang/annotation/Target.members.trap.gz
+classes/java/lang/annotation/ElementType.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/apiguardian/api/API.members.trap.gz
+classes/org/apiguardian/api/API$Status.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/params/provider/ArgumentsSource.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/org/junit/jupiter/params/provider/MethodArgumentsProvider.members.trap.gz

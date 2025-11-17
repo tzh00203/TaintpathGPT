@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/BundleException.members/BundleException.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/BundleException.members.trap.gz
+classes/java/lang/Exception.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/String.members.trap.gz

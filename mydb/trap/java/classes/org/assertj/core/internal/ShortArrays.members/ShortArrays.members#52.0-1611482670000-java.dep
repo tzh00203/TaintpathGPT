@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/ShortArrays.members/ShortArrays.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/ShortArrays.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Short.members.trap.gz
+classes/java/util/Comparator.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/assertj/core/data/Index.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz
+classes/org/assertj/core/internal/Arrays.members.trap.gz
+classes/org/assertj/core/internal/ComparisonStrategy.members.trap.gz
+classes/org/assertj/core/internal/Failures.members.trap.gz

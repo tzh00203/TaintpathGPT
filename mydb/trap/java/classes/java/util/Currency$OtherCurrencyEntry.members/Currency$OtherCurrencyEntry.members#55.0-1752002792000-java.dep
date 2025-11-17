@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/Currency$OtherCurrencyEntry.members/Currency$OtherCurrencyEntry.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/Currency$OtherCurrencyEntry.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/Currency.members.trap.gz

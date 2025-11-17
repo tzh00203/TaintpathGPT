@@ -1,0 +1,23 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/FilteredObjectInputStream.members/FilteredObjectInputStream.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/FilteredObjectInputStream.members.trap.gz
+classes/java/io/ObjectInputStream.members.trap.gz
+classes/java/io/ObjectStreamClass.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/lang/ClassNotFoundException.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/io/InputStream.members.trap.gz
+classes/java/lang/SecurityException.members.trap.gz

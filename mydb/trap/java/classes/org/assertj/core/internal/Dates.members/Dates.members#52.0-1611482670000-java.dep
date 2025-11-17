@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/Dates.members/Dates.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/Dates.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/java/util/Date.members.trap.gz
+classes/java/util/concurrent/TimeUnit.members.trap.gz
+classes/java/util/Comparator.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz
+classes/org/assertj/core/internal/ComparisonStrategy.members.trap.gz
+classes/org/assertj/core/internal/Failures.members.trap.gz

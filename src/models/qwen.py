@@ -11,8 +11,8 @@ _model_name_map = {
     "qwen2.5-coder-1.5b": "Qwen/Qwen2.5-Coder-1.5B-Instruct",
     "qwen2.5-14b": "Qwen/Qwen2.5-14B-Instruct",
     "qwen2.5-32b": "Qwen/Qwen2.5-32B-Instruct",
-    "qwen2.5-72b" : "Qwen/Qwen2.5-72B-Instruct"
-    
+    "qwen2.5-72b" : "Qwen/Qwen2.5-72B-Instruct",
+    "qwen3-30b" : "Qwen/Qwen3-30B-Instruct",
 }
 
 class QwenModel(LLM):

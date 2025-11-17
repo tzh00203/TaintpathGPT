@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/Version.members/Version.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/Version.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Comparable.members.trap.gz
+classes/java/lang/String.members.trap.gz

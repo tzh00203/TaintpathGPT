@@ -44,6 +44,7 @@ from
     Call api
 where
     isExternallCall(api) and
+    // TODO: filter out no-arg calls?
     api.getCallee().getStringSignature() != "()" and
     api.getCallee().getDeclaringType().getSourceDeclaration().getName() != "Object"
 select

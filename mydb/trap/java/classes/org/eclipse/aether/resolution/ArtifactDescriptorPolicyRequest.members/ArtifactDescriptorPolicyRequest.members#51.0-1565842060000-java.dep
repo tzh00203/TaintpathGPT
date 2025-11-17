@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/resolution/ArtifactDescriptorPolicyRequest.members/ArtifactDescriptorPolicyRequest.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/resolution/ArtifactDescriptorPolicyRequest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/eclipse/aether/artifact/Artifact.members.trap.gz

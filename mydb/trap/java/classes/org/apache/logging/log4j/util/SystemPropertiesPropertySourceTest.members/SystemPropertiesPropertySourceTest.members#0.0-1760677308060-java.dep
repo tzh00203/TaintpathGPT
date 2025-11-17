@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceTest.members/SystemPropertiesPropertySourceTest.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceTest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/api/Tag.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceLock.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceAccessMode.members.trap.gz
+classes/org/junit/jupiter/api/Test.members.trap.gz
+classes/java/lang/InterruptedException.members.trap.gz
+classes/java/util/concurrent/ExecutionException.members.trap.gz

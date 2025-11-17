@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/java9/StackLocatorTest$Foo.members/StackLocatorTest$Foo.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/java9/StackLocatorTest$Foo.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/util/java9/StackLocatorTest.members.trap.gz

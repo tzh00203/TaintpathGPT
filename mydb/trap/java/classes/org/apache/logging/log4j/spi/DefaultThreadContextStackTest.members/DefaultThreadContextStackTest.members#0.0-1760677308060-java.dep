@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/DefaultThreadContextStackTest.members/DefaultThreadContextStackTest.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/DefaultThreadContextStackTest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/junit/UsingAnyThreadContext.members.trap.gz
+classes/org/junit/jupiter/api/Test.members.trap.gz
+classes/org/apache/logging/log4j/spi/DefaultThreadContextStack.members.trap.gz
+classes/org/junit/jupiter/api/BeforeEach.members.trap.gz

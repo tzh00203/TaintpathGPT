@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/RepositoryCache.members/RepositoryCache.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/RepositoryCache.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz

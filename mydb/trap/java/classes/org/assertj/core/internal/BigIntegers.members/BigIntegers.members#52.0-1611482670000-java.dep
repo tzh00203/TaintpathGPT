@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/internal/BigIntegers.members/BigIntegers.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/internal/BigIntegers.members.trap.gz
+classes/java/math/BigInteger.members.trap.gz
+classes/org/assertj/core/internal/Numbers.members.trap.gz
+classes/org/assertj/core/internal/Comparables.members.trap.gz
+classes/java/lang/Number.members.trap.gz
+classes/org/assertj/core/api/AssertionInfo.members.trap.gz
+classes/org/assertj/core/data/Percentage.members.trap.gz
+classes/org/assertj/core/data/Offset.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/internal/ComparisonStrategy.members.trap.gz
+classes/org/assertj/core/util/VisibleForTesting.members.trap.gz

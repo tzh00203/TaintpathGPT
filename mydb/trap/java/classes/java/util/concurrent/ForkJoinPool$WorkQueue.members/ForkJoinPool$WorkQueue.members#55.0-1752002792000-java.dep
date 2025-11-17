@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/concurrent/ForkJoinPool$WorkQueue.members/ForkJoinPool$WorkQueue.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/concurrent/ForkJoinPool$WorkQueue.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/concurrent/ForkJoinPool.members.trap.gz
+classes/jdk/internal/vm/annotation/Contended.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/concurrent/ForkJoinPool$ManagedBlocker.members.trap.gz
+classes/java/util/concurrent/CountedCompleter.members.trap.gz
+classes/java/util/concurrent/ForkJoinTask.members.trap.gz
+classes/java/util/concurrent/Future.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/util/concurrent/ForkJoinWorkerThread.members.trap.gz
+classes/java/lang/invoke/VarHandle.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz

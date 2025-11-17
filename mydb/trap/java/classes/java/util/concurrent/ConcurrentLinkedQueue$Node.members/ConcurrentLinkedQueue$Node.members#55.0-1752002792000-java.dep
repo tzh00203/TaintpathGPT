@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/concurrent/ConcurrentLinkedQueue$Node.members/ConcurrentLinkedQueue$Node.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/concurrent/ConcurrentLinkedQueue$Node.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/concurrent/ConcurrentLinkedQueue.members.trap.gz

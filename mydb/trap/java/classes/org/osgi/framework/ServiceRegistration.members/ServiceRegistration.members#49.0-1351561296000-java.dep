@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/ServiceRegistration.members/ServiceRegistration.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/ServiceRegistration.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Dictionary.members.trap.gz
+classes/org/osgi/framework/ServiceReference.members.trap.gz
+classes/java/lang/Comparable.members.trap.gz

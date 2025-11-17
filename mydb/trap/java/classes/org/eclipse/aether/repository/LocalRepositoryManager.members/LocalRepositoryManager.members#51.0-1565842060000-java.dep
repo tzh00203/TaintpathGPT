@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/LocalRepositoryManager.members/LocalRepositoryManager.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/LocalRepositoryManager.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz
+classes/org/eclipse/aether/repository/LocalMetadataRegistration.members.trap.gz
+classes/org/eclipse/aether/repository/LocalMetadataRequest.members.trap.gz
+classes/org/eclipse/aether/repository/LocalMetadataResult.members.trap.gz
+classes/org/eclipse/aether/repository/LocalArtifactRegistration.members.trap.gz
+classes/org/eclipse/aether/repository/LocalArtifactRequest.members.trap.gz
+classes/org/eclipse/aether/repository/LocalArtifactResult.members.trap.gz
+classes/org/eclipse/aether/metadata/Metadata.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/eclipse/aether/artifact/Artifact.members.trap.gz
+classes/org/eclipse/aether/repository/LocalRepository.members.trap.gz

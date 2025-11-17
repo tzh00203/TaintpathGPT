@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/data/Percentage.members/Percentage.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/data/Percentage.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz

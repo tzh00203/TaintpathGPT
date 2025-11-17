@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/project/ProjectBuildingRequest.members/ProjectBuildingRequest.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/project/ProjectBuildingRequest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/maven/project/ProjectBuildingRequest$RepositoryMerging.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz
+classes/java/util/Date.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/apache/maven/model/Profile.members.trap.gz
+classes/org/apache/maven/project/MavenProject.members.trap.gz
+classes/java/util/Properties.members.trap.gz
+classes/org/apache/maven/artifact/repository/ArtifactRepository.members.trap.gz

@@ -199,7 +199,12 @@ class LLM:
 
     @staticmethod
     def get_llm(model_name, kwargs, logger):
-        if model_name.lower().startswith("codellama"):
+
+        if model_name.lower().startswith("remote"):
+            from models.qwen_remote import QwenAPIRemote
+            model = QwenAPIRemote(model_name, logger, **kwargs)
+        
+        elif model_name.lower().startswith("codellama"):
             from models.codellama import CodeLlamaModel
 
             model = CodeLlamaModel(model_name, logger, **kwargs)

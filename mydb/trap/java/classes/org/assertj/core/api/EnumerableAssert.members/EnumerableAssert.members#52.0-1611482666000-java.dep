@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/EnumerableAssert.members/EnumerableAssert.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/EnumerableAssert.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/Comparator.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz

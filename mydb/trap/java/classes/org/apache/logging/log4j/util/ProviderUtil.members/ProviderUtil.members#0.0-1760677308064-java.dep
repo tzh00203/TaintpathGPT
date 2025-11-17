@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/ProviderUtil.members/ProviderUtil.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/ProviderUtil.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/ClassLoader.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/apache/logging/log4j/spi/Provider.members.trap.gz
+classes/java/net/URL.members.trap.gz
+classes/java/util/Enumeration.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/concurrent/locks/Lock.members.trap.gz
+classes/java/util/Collection.members.trap.gz

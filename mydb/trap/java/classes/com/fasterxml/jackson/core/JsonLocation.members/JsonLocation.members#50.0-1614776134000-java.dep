@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/com/fasterxml/jackson/core/JsonLocation.members/JsonLocation.members#50.0-1614776134000-java.trap.gz
+
+TRAPS
+classes/com/fasterxml/jackson/core/JsonLocation.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/StringBuilder.members.trap.gz
+classes/java/lang/String.members.trap.gz

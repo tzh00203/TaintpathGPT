@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/model/Notifier.members/Notifier.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/model/Notifier.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/org/apache/maven/model/InputLocationTracker.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Properties.members.trap.gz
+classes/org/apache/maven/model/InputLocation.members.trap.gz

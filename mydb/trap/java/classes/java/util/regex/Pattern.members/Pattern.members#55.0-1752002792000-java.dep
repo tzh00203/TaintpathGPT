@@ -1,0 +1,27 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/util/regex/Pattern.members/Pattern.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/util/regex/Pattern.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/CharSequence.members.trap.gz
+classes/java/util/stream/Stream.members.trap.gz
+classes/java/util/stream/BaseStream.members.trap.gz
+classes/java/lang/AutoCloseable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/function/Predicate.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/util/regex/Pattern$CharPredicate.members.trap.gz
+classes/java/util/regex/Pattern$BmpCharPredicate.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/lang/Integer.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/util/regex/Matcher.members.trap.gz
+classes/java/util/regex/Pattern$Node.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/util/regex/Pattern$GroupHead.members.trap.gz

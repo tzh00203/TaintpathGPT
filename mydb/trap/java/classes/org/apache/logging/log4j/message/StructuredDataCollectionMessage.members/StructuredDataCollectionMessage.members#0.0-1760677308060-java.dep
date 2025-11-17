@@ -1,0 +1,25 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/StructuredDataCollectionMessage.members/StructuredDataCollectionMessage.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/StructuredDataCollectionMessage.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/util/StringBuilderFormattable.members.trap.gz
+classes/org/apache/logging/log4j/message/StructuredDataMessage.members.trap.gz
+classes/org/apache/logging/log4j/message/MessageCollectionMessage.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/util/Spliterator.members.trap.gz
+classes/java/util/function/Consumer.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/util/Iterator.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/StringBuilder.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz

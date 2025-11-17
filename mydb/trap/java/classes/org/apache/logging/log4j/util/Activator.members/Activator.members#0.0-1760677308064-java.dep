@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/Activator.members/Activator.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/Activator.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/osgi/framework/BundleActivator.members.trap.gz
+classes/org/osgi/framework/SynchronousBundleListener.members.trap.gz
+classes/org/osgi/framework/BundleEvent.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/org/osgi/framework/BundleContext.members.trap.gz
+classes/java/lang/Exception.members.trap.gz

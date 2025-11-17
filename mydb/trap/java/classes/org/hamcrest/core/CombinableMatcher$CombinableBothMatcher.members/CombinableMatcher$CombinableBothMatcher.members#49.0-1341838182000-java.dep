@@ -1,0 +1,13 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/hamcrest/core/CombinableMatcher$CombinableBothMatcher.members/CombinableMatcher$CombinableBothMatcher.members#49.0-1341838182000-java.trap.gz
+
+TRAPS
+classes/org/hamcrest/core/CombinableMatcher$CombinableBothMatcher.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/hamcrest/core/CombinableMatcher.members.trap.gz
+classes/org/hamcrest/Matcher.members.trap.gz
+classes/org/hamcrest/SelfDescribing.members.trap.gz
+classes/org/hamcrest/TypeSafeDiagnosingMatcher.members.trap.gz
+classes/org/hamcrest/BaseMatcher.members.trap.gz

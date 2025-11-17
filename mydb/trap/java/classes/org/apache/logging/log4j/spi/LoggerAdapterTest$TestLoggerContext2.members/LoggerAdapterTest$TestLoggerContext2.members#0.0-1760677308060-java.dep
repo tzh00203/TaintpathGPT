@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/LoggerAdapterTest$TestLoggerContext2.members/LoggerAdapterTest$TestLoggerContext2.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/LoggerAdapterTest$TestLoggerContext2.members.trap.gz
+classes/org/apache/logging/log4j/TestLoggerContext.members.trap.gz
+classes/org/apache/logging/log4j/spi/LoggerAdapterTest.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/spi/LoggerContextShutdownAware.members.trap.gz

@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceSecurityManagerIT.members/SystemPropertiesPropertySourceSecurityManagerIT.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceSecurityManagerIT.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceLock.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/junit/jupiter/api/parallel/ResourceAccessMode.members.trap.gz
+classes/org/junit/Test.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/org/junit/Test$None.members.trap.gz
+classes/org/apache/logging/log4j/junit/SecurityManagerTestRule.members.trap.gz
+classes/org/junit/Rule.members.trap.gz

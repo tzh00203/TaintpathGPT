@@ -1,0 +1,6 @@
+TRAP dependencies 1.2
+
+TRAP
+modules/org.apiguardian.api.trap.gz
+
+TRAPS

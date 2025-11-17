@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/data/MapEntry.members/MapEntry.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/data/MapEntry.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/Map$Entry.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/util/Comparator.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/java/lang/Comparable.members.trap.gz
+classes/java/lang/String.members.trap.gz

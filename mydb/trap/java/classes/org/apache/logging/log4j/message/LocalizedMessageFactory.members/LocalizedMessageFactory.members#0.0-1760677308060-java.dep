@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/LocalizedMessageFactory.members/LocalizedMessageFactory.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/LocalizedMessageFactory.members.trap.gz
+classes/org/apache/logging/log4j/message/AbstractMessageFactory.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/util/ResourceBundle.members.trap.gz

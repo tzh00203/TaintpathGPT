@@ -1,6 +1,6 @@
 API_LABELLING_SYSTEM_PROMPT = """\
 You are a security expert. \
-You are given a list of APIs to be labeled as potential taint sources, sinks, or APIs that propagate taints. \
+You are given a list of APIs to be labeled as potential taint sinks, or APIs that propagate taints. \
 Taint sources are values that an attacker can use for unauthorized and malicious operations when interacting with the system. \
 Taint source APIs usually return strings or custom object types. Setter methods are typically NOT taint sources. \
 Taint sinks are program points that can use tainted data in an unsafe way, which directly exposes vulnerability under attack. \
@@ -12,7 +12,7 @@ Return the result as a json list with each object in the format:
   "method": <method name>,
   "signature": <signature of the method>,
   "sink_args": <list of arguments or `this`; empty if the API is not sink>,
-  "type": <"source", "sink", or "taint-propagator"> }
+  "type": <"sink", or "taint-propagator"> }
 
 DO NOT OUTPUT ANYTHING OTHER THAN JSON.\
 """
@@ -20,12 +20,24 @@ DO NOT OUTPUT ANYTHING OTHER THAN JSON.\
 API_LABELLING_USER_PROMPT = """\
 {cwe_long_description}
 
-Some example source/sink/taint-propagator methods are:
+Vulnerability fix diff from the project containing the APIs to be analyzed:
+--------------diff_start--------------
+{vulnerability_diff}
+--------------diff_end--------------
+
+Important Context: The vulnerability diff above shows a specific security fix in this project, \
+but you should analyze ALL the methods below for potential {cwe_description} vulnerabilities (CWE-{cwe_id}). \
+The diff serves as context for the project's security patterns, but your analysis should not be limited to only \
+the vulnerability type shown in the diff.
+
+Some example sink/taint-propagator methods are:
 {cwe_examples}
 
-Among the following methods, \
-assuming that the arguments passed to the given function is malicious, \
+Among the following methods, assuming that the arguments passed to the given function is malicious, \
 what are the functions that are potential source, sink, or taint-propagators to {cwe_description} attack (CWE-{cwe_id})?
+
+Please analyze ALL provided methods for labeling, considering the broader context of {cwe_description} vulnerabilities \
+beyond just the specific example in the diff.
 
 Package,Class,Method,Signature
 {methods}
@@ -33,11 +45,12 @@ Package,Class,Method,Signature
 
 FUNC_PARAM_LABELLING_SYSTEM_PROMPT = """\
 You are a security expert. \
-You are given a list of APIs implemented in established Java libraries, \
+You are given a list of APIs implemented in established Java or Python libraries, \
 and you need to identify whether some of these APIs could be potentially invoked by downstream libraries with malicious end-user (not programmer) inputs. \
 For instance, functions that deserialize or parse inputs might be used by downstream libraries and would need to add sanitization for malicious user inputs. \
 On the other hand, functions like HTTP request handlers are typically final and won't be called by a downstream package. \
 Utility functions that are not related to the primary purpose of the package should also be ignored. \
+Please also note the case where the taint flow serves as the class of the called method (like getName etc.). In this scenario, consider whether the taint may propagate to variables returned by the called method.\
 Return the result as a json list with each object in the format:
 
 { "package": <package name>,
@@ -51,16 +64,24 @@ Do not output anything other than JSON.\
 """
 
 FUNC_PARAM_LABELLING_USER_PROMPT = """\
-You are analyzing the Java package {project_username}/{project_name}. \
+You are analyzing the Java and Python package {project_username}/{project_name}. \
 Here is the package summary:
 
 {project_readme_summary}
 
+###Vulnerability fix diff from the project containing the APIs to be analyzed:
+{vulnerability_diff}
+
+Important: The vulnerability diff above provides context about security issues in this project, but you must analyze ALL public methods listed below. \
+Do not limit your analysis to only the vulnerability types shown in the diff.
+
 Please look at the following public methods in the library and their documentations (if present). \
-What are the most important functions that look like can be invoked by a downstream Java package that is dependent on {project_name}, \
+What are the most important functions that look like can be invoked by a downstream Java or Python package that is dependent on {project_name}, \
 and that the function can be called with potentially malicious end-user inputs? \
 If the package does not seem to be a library, just return empty list as the result. \
-Utility functions that are not related to the primary purpose of the package should also be ignored
+Utility functions that are not related to the primary purpose of the package should also be ignored.
+
+Analyze ALL methods below comprehensively, considering various types of security risks beyond just those shown in the vulnerability diff.
 
 Package,Class,Method,Doc
 {methods}

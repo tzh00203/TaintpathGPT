@@ -1,0 +1,21 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/PropertiesUtil.members/PropertiesUtil.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/PropertiesUtil.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/Properties.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/ResourceBundle.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/apache/logging/log4j/util/Supplier.members.trap.gz
+classes/java/time/Duration.members.trap.gz
+classes/java/lang/Long.members.trap.gz
+classes/java/lang/Integer.members.trap.gz
+classes/java/nio/charset/Charset.members.trap.gz
+classes/java/lang/Boolean.members.trap.gz
+classes/java/io/InputStream.members.trap.gz

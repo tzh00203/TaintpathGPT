@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/AbstractLogger$LocalLogBuilder.members/AbstractLogger$LocalLogBuilder.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/AbstractLogger$LocalLogBuilder.members.trap.gz
+classes/org/apache/logging/log4j/internal/DefaultLogBuilder.members.trap.gz
+classes/java/lang/ThreadLocal.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/ThreadLocal$ThreadLocalMap.members.trap.gz
+classes/java/lang/Thread.members.trap.gz
+classes/java/util/function/Supplier.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/apache/logging/log4j/spi/AbstractLogger.members.trap.gz
+classes/java/lang/Override.members.trap.gz

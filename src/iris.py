@@ -8,6 +8,7 @@ import re
 import argparse
 import numpy as np
 import copy
+import glob
 import math
 import random
 
@@ -27,18 +28,19 @@ from src.queries import QUERIES
 from src.prompts import API_LABELLING_SYSTEM_PROMPT, API_LABELLING_USER_PROMPT
 from src.prompts import FUNC_PARAM_LABELLING_SYSTEM_PROMPT, FUNC_PARAM_LABELLING_USER_PROMPT
 
-from src.codeql_queries import QL_SOURCE_PREDICATE, QL_STEP_PREDICATE, QL_SINK_PREDICATE
+from src.codeql_queries import QL_SOURCE_PREDICATE, QL_SOURCE_PREDICATE_PYTHON, QL_STEP_PREDICATE, QL_STEP_PREDICATE_PYTHON, QL_SINK_PREDICATE, QL_SINK_PREDICATE_PYTHON
 from src.codeql_queries import EXTENSION_YML_TEMPLATE, EXTENSION_SRC_SINK_YML_ENTRY, EXTENSION_SUMMARY_YML_ENTRY
 from src.codeql_queries import QL_METHOD_CALL_SOURCE_BODY_ENTRY, QL_FUNC_PARAM_SOURCE_ENTRY, QL_FUNC_PARAM_NAME_ENTRY
 from src.codeql_queries import QL_SUMMARY_BODY_ENTRY, QL_BODY_OR_SEPARATOR
 from src.codeql_queries import QL_SUBSET_PREDICATE, CALL_QL_SUBSET_PREDICATE
 from src.codeql_queries import QL_SINK_BODY_ENTRY, QL_SINK_ARG_NAME_ENTRY, QL_SINK_ARG_THIS_ENTRY
-
+from src.codeql_queries import *
 from src.modules.codeql_query_runner import CodeQLQueryRunner
 from src.modules.contextual_analysis_pipeline import ContextualAnalysisPipeline
 from src.modules.evaluation_pipeline import EvaluationPipeline
 
 from src.models.llm import LLM
+from src.utils.general_utils import *
 
 CODEQL = f"{CODEQL_DIR}/codeql"
 
@@ -89,7 +91,11 @@ class SAPipeline:
             debug_source: bool = False,
             debug_sink: bool = False,
             test_run: bool = False,
+            language: str = "java",
             no_logger: bool = False,
+            diff_path: str = "",
+            general: bool = False
+
     ):
         # Store basic information
         self.project_name = project_name
@@ -126,10 +132,14 @@ class SAPipeline:
         self.test_run = test_run
         self.no_logger = no_logger
 
+        self.language = language
+        self.general = general
+
         # Setup logger
         if not self.no_logger:
             self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
 
+        
         # Check if the query is valid
         if self.query in QUERIES:
             if "cwe_id" not in QUERIES[self.query]:
@@ -144,12 +154,21 @@ class SAPipeline:
             raise Exception(f"Unknown query `{self.query}`; aborting")
         self.cwe_id = QUERIES[self.query]["cwe_id"]
         self.cve_id = project_name.split("_")[3]
+       
 
         # Load some basic information, such as commits and fixes related to the CVE
         self.project_source_code_dir = f"{PROJECT_SOURCE_CODE_DIR}/{self.project_name}"
+
+        self.diff_path = str(self.project_source_code_dir)+ "/" + "diff.txt"
+        self.diff_content = open(self.diff_path, "r").read() if os.path.exists(self.diff_path) else ""
+
         if self.cve_id is not None and self.cve_id.startswith("CVE-"):
             self.all_cves_with_commit = pd.read_csv(CVES_MAPPED_W_COMMITS_DIR)
+            # print(self.all_cves_with_commit)
+            # print(self.cve_id)
+            # print(self.all_cves_with_commit[self.all_cves_with_commit["cve_id"] == self.cve_id])
             self.project_cve_with_commit_info = self.all_cves_with_commit[self.all_cves_with_commit["cve_id"] == self.cve_id].iloc[0]
+            # print(self.project_cve_with_commit_info)
             self.cve_fixing_commits = self.project_cve_with_commit_info["fix_commit_ids"].split(";")
         else:
             self.cve_fixing_commits = []
@@ -170,7 +189,7 @@ class SAPipeline:
 
         # Setup codeql database path
         self.project_codeql_db_path = f"{CODEQL_DB_PATH}/{self.project_name}"
-        if not os.path.exists(f"{self.project_codeql_db_path}/db-java"):
+        if not os.path.exists(f"{self.project_codeql_db_path}/db-{self.language}"):
             if not self.no_logger:
                 self.master_logger.info(f"Processing {self.project_name} (Query: {self.query}, Trial: {self.run_id})...")
                 self.master_logger.error(f"==> Cannot find CodeQL database for {self.project_name}; aborting")
@@ -214,7 +233,7 @@ class SAPipeline:
         os.makedirs(self.label_func_params_log_path, exist_ok=True)
 
         # CodeQL queries paths - generate files directly in final destination
-        cwe_query_dir = f"{self.custom_codeql_root}/{self.query}"
+        cwe_query_dir = f"{self.custom_codeql_root}/{self.query}" if not self.general else f"{self.custom_codeql_root}/general"
 
         self.source_qll_path = f"{cwe_query_dir}/MySources.qll"
         self.summary_qll_path = f"{cwe_query_dir}/MySummaries.qll"
@@ -222,7 +241,7 @@ class SAPipeline:
         self.spec_yml_path = f"{cwe_query_dir}/specs.model.yml"
 
         # Setup query output path
-        self.query_output_path = f"{self.project_output_path}/{self.query}"
+        self.query_output_path = f"{self.project_output_path}/{self.query}" if not self.general else f"{self.project_output_path}/general"
         os.makedirs(self.query_output_path, exist_ok=True)
         self.query_output_result_sarif_path = f"{self.query_output_path}/results.sarif"
         self.query_output_result_sarif_pp_path = f"{self.query_output_path}/results_pp.sarif"
@@ -256,7 +275,23 @@ class SAPipeline:
         if not os.path.exists(self.common_cache_path):
             os.makedirs(self.common_cache_path, exist_ok=True)
         self.api_labels_cache_path = f"{self.common_cache_path}/api_labels_{self.llm}.json"
+        self.func_labels_cache_path = f"{self.common_cache_path}/func_labels_{self.llm}.json"
         self.model = None
+
+    def clean_json_string(self, json_str):
+        """清理JSON字符串中的无效字符"""
+        # 移除控制字符（除了\t, \n, \r）
+        cleaned = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', '', json_str)
+        
+        # 修复未转义的双引号
+        cleaned = re.sub(r'(?<!\\)"', '\\"', cleaned)
+        
+        # 修复常见的JSON格式问题
+        cleaned = cleaned.replace('\\n', '\\\\n')
+        cleaned = cleaned.replace('\\t', '\\\\t')
+        
+        return cleaned
+
 
     def _create_custom_qlpack_yml(self):
         """Create qlpack.yml for the custom CodeQL package"""
@@ -264,8 +299,8 @@ class SAPipeline:
 name: iris
 version: 1.0.0
 dependencies:
-  codeql/java-all: "*"
-  codeql/java-queries: "*"
+  codeql/{self.language}-all: "*"
+  codeql/{self.language}-queries: "*"
 """
         qlpack_path = f"{self.custom_codeql_root}/qlpack.yml"
         os.makedirs(self.custom_codeql_root, exist_ok=True)
@@ -278,12 +313,14 @@ dependencies:
         return self.model
 
     def run_simple_codeql_query(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
-        runner = CodeQLQueryRunner(self.project_output_path, self.project_codeql_db_path, self.project_logger)
+        runner = CodeQLQueryRunner(self.project_output_path, self.project_codeql_db_path, self.project_logger, self.language)
         runner.run(query, target_csv_path, suffix, dyn_queries)
 
     def keep_external_packages(self, api_candidates_df):
+        # print(666, api_candidates_df)
         packages = open(f"{PACKAGE_MODULES_PATH}/{self.project_name}.txt").readlines()
         packages = [p.strip() for p in packages]
+        # print(777, packages)
         return api_candidates_df[~api_candidates_df["package"].isin(packages)]
 
     def keep_internal_packages(self, api_candidates_df):
@@ -342,7 +379,7 @@ dependencies:
 
         # 1. Invoke CodeQL to extract the external APIs
         if not os.path.exists(self.external_apis_csv_path) or self.overwrite or self.overwrite_api_candidates:
-            self.project_logger.info("  ==> Extracting all external APIs by running CodeQL... ", no_new_line=True)
+            self.project_logger.info("  ==> Extracting all external APIs by running CodeQL/Python... ", no_new_line=True)
             self.run_simple_codeql_query("fetch_external_apis")
             self.project_logger.print("Done.")
         else:
@@ -355,6 +392,7 @@ dependencies:
 
             # 3. Filter the APIs by internal/external, and source/sink/taint-prop
             external_api_candidates = self.keep_external_packages(external_api_candidates)
+            # print(777, external_api_candidates)
             possible_src_snk_tp = external_api_candidates.apply(lambda row: self.api_is_candidate(row, num_external_apis), axis=1)
             external_api_candidates = external_api_candidates[possible_src_snk_tp]
 
@@ -395,7 +433,7 @@ dependencies:
 
         # 1. Invoke CodeQL to extract the internal function parameters
         if not os.path.exists(self.func_param_path) or self.overwrite or self.overwrite_func_param_candidates:
-            self.project_logger.info("  ==> Extracting all function parameters by running CodeQL... ", no_new_line=True)
+            self.project_logger.info("  ==> Extracting all function parameters by running CodeQL/Python... ", no_new_line=True)
             self.run_simple_codeql_query("fetch_func_params")
             self.project_logger.print("Done.")
         else:
@@ -432,6 +470,7 @@ dependencies:
         """
         :param candidates, a list of the following [(<package>, <class>, <method>, <signature>), ...]
         """
+        if self.language == "python":return candidates
         llm_results = self.load_cached_llm_labeled_apis()
         cached_apis = set([(item["package"], item["class"], item["method"], item["signature"]) for item in llm_results])
         remaining_apis = sorted(list(set(candidates).difference(cached_apis)))
@@ -480,47 +519,84 @@ dependencies:
 
     def parse_json(self, json_str):
         try:
-            #print("try 1", json_str)
             import re
             
-            # Remove markdown code block markers if present
+            # 1. 首先移除控制字符
+            json_str = ''.join(char for char in json_str if ord(char) >= 32 or char in '\t\n\r')
+            
+            # 2. 修复空字符串字段的引号问题
+            json_str = re.sub(r'"package":\s*,', '"package": "",', json_str)
+            json_str = re.sub(r'"class":\s*,', '"class": "",', json_str)
+            json_str = re.sub(r'"method":\s*,', '"method": "",', json_str)
+            
+            # 3. 修复未闭合的字符串
+            json_str = re.sub(r'("package":\s*"[^"]*?)(?=,|\n|\})', r'\1"', json_str)
+            json_str = re.sub(r'("class":\s*"[^"]*?)(?=,|\n|\})', r'\1"', json_str)
+            json_str = re.sub(r'("method":\s*"[^"]*?)(?=,|\n|\})', r'\1"', json_str)
+            json_str = re.sub(r'("signature":\s*"[^"]*?)(?=,|\n|\})', r'\1"', json_str)
+            
+            # 4. 移除markdown代码块标记（您的原有代码）
             json_str = re.sub(r'```json\s*', '', json_str)
             json_str = re.sub(r'```\s*$', '', json_str)
 
-            # Handle escaped single quotes which are invalid in JSON
+            # 5. 处理转义字符（您的原有代码）
             json_str = json_str.replace("\\'", "'")
-
-            # Original cleanup
             json_str = json_str.replace("\\n", "").replace("\\\n", "")
             json_str = re.sub("//.*", "", json_str)
             json_str = re.sub("\"\"", "\"", json_str)
 
-            
-            # Extract JSON array
+            # 6. 提取JSON数组
             json_match = re.findall("\[[\s\S]*\]", json_str)
             if not json_match:
                 self.project_logger.error("Error parsing JSON: No JSON array found in response")
                 return []
 
             json_str = json_match[0]
-            #json_str = re.sub(r"\\n", "", json_str)
+            
+            # 7. 最终验证和修复
+            json_str = self.final_json_cleanup(json_str)
+            
             result = json.loads(json_str)
             if type(result) == list:
                 return result
             else:
                 return []
+                
         except Exception as e:
-            print(e)
+            print(f"Initial parse error: {e}")
             try:
                 self.project_logger.error("Error parsing JSON 1. Trying list parsing")
-                results = re.findall(r"{[^}]*}", json_str)
+                # 在备选解析中也添加清理
+                cleaned_str = self.final_json_cleanup(json_str)
+                results = re.findall(r"{[^}]*}", cleaned_str)
                 results = [json.loads(r.strip()) for r in results]
                 return results
             except Exception as e:
-                print(e)
+                print(f"Fallback parse error: {e}")
                 self.project_logger.error("Error parsing JSON 2")
                 self.project_logger.error(f"Problematic JSON string: {repr(json_str[:500])}")
         return []
+
+    
+    def final_json_cleanup(self, json_str):
+        """最终的JSON清理"""
+        import re
+        
+        # 修复常见的JSON格式问题
+        fixes = [
+            # (r',\s*}', '}'),  # 移除尾随逗号
+            # (r',\s*]', ']'),  # 移除尾随逗号
+            # (r'{\s*,', '{'),  # 修复开头逗号
+            # (r'"\s*,', '",'), # 确保引号后跟逗号
+            # (r':\s*"', ': "'), # 统一冒号格式
+            (r'":\s*"\s*,', '": "",'),  # 处理 "package": ", 这种情况
+        ]
+        
+        for pattern, replacement in fixes:
+            json_str = re.sub(pattern, replacement, json_str)
+        
+        return json_str
+
 
     def query_gpt_for_api_src_tp_sink_batched(self):
         self.project_logger.info("==> Stage 3: Querying GPT for source/taint-prop/sink APIs...")
@@ -560,6 +636,7 @@ dependencies:
                 # 4.2. Build the user prompt and dump it
                 user_prompt = API_LABELLING_USER_PROMPT.format(
                     cwe_description=cwe_description,
+                    vulnerability_diff=self.diff_content,
                     cwe_id=self.cwe_id,
                     cwe_long_description=cwe_long_description,
                     cwe_examples=cwe_examples,
@@ -571,7 +648,6 @@ dependencies:
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
                 ]
-
                 # 4.4. Parse the GPT result
                 #json_result = self.parse_json(result)
                 #return json_result
@@ -580,9 +656,11 @@ dependencies:
             args = range(0, len(to_query_candidates), self.label_api_batch_size)
             indiv_prompts = [process_candidate_batch(i) for i in args]
             indiv_results = []
+
+  
             responses = self.get_model().predict(indiv_prompts, batch_size=self.num_threads)
             for i, response in zip(args, responses):
-                json_result = self.parse_json(response)
+                json_result = json.loads(response)
                 with open(f"{self.label_api_log_path}/raw_llm_response_{i}.txt", "w") as f:
                     f.write(str(response) + "\n")
                 indiv_results.append(json_result)
@@ -591,6 +669,8 @@ dependencies:
             merged_llm_results = []
             for indiv_result in indiv_results:
                 merged_llm_results.extend(indiv_result)
+                
+            # FIXME: 过滤属性为空的条目
             merged_llm_results=self.filter_invalid_entries(merged_llm_results)
             # 7. Save the result for this project
             merged_overall_results = self.merge_llm_labeled_apis_and_cache(candidates, merged_llm_results)
@@ -598,6 +678,7 @@ dependencies:
             taint_props = [r for r in merged_overall_results if r.get("type", "") == "taint-propagator"]
             sinks = [r for r in merged_overall_results if r.get("type", "") == "sink"]
             self.project_logger.info(f"  ==> #APIs Labelled by LLM: {len(merged_overall_results)}, #Source: {len(sources)}, #Sink: {len(sinks)}, #Taint Propagators: {len(taint_props)}")
+    
             if not self.test_run:
                 json.dump(sources, open(self.llm_labelled_source_apis_path, "w"), indent=2)
                 json.dump(taint_props, open(self.llm_labelled_taint_prop_apis_path, "w"), indent=2)
@@ -608,7 +689,45 @@ dependencies:
                 self.cache_llm_results(candidates, merged_overall_results)
         else:
             self.project_logger.info("  ==> Existing labelled source/taint-prop/sink APIs found. Skipping querying GPT...")
+            self.project_logger.info("  ==> From logs labeled apis merged...")
+            original_labeled_api_source = json.loads(open(self.llm_labelled_source_apis_path, "r").read())
+            original_labeled_api_sink = json.loads(open(self.llm_labelled_sink_apis_path, "r").read())
+            original_labeled_api_taint_prop = json.loads(open(self.llm_labelled_taint_prop_apis_path, "r").read())
+            
+            file_pattern = os.path.join(self.label_api_log_path, "*llm_response*.txt")
+            matching_files = glob.glob(file_pattern)
 
+            for file_path in matching_files:
+                with open(file_path, "r") as f:
+                    data_tmp = f.read()
+                    if not data_tmp.strip():continue
+                    try:
+                        # data = self.parse_json(data_tmp)
+                        data = json.loads(data_tmp)
+                        for item in data:
+                            if item.get("type", "") == "sink":
+                                original_labeled_api_sink.append(item)
+                            elif item.get("type", "") == "source":
+                                original_labeled_api_source.append(item)
+                            elif item.get("type", "") == "taint-propagator":
+                                original_labeled_api_taint_prop.append(item)
+
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding JSON from file {file_path}: {e}")
+                        continue
+                
+     
+            api_data = [
+                (original_labeled_api_source, self.llm_labelled_source_apis_path),
+                (original_labeled_api_taint_prop, self.llm_labelled_taint_prop_apis_path),
+                (original_labeled_api_sink, self.llm_labelled_sink_apis_path)
+            ]
+
+            # 对每个列表去重并保存
+            for api_list, path in api_data:
+                unique_apis = remove_duplicates(api_list)
+                json.dump(unique_apis, open(path, "w"), indent=2)
+            
     def first_project_description_paragraph(self, readme_lines):
         filtered_lines = []
         prev_line_is_empty = True
@@ -694,10 +813,50 @@ dependencies:
         else:
             return doc_str[:MAX_DOC_LENGTH] + "..."
 
+    # def fetch_func_param_src_candidates(self):
+    #     candidates_csv = pd.read_csv(self.source_func_param_candidates_path, keep_default_na=False)
+    #     self.llm_labelled_source_func_params_path
+    #     # Do deduplication
+    #     dedup_map = {}
+    #     for (_, row) in candidates_csv.iterrows():
+    #         key = (row["package"], row["clazz"], row["func"])
+    #         if key not in dedup_map:
+    #             dedup_map[key] = row
+    #         else:
+    #             if row["doc"] != "":
+    #                 dedup_map[key] = row
+    #             elif len(row["full_signature"]) > len(dedup_map[key]["full_signature"]):
+    #                 dedup_map[key] = row
+
+    #     # Add doc into the candidates
+    #     candidates = [(key[0], key[1], key[2], row["full_signature"], self.extract_doc(row["doc"])) for (key, row) in dedup_map.items()]
+
+    #     # Count the number of functions with documentations
+    #     num_with_docs = len([() for cand in candidates if cand[4] != ""])
+    #     self.project_logger.info(f"  ==> #Candidate functions with source param: {len(candidates_csv)}; after deduplication and decached: {len(candidates)}; with documentations: {num_with_docs}. Querying LLM...")
+
+    #     return candidates
+
     def fetch_func_param_src_candidates(self):
+
         candidates_csv = pd.read_csv(self.source_func_param_candidates_path, keep_default_na=False)
 
-        # Do deduplication
+        # Step 1. 从缓存文件中读取已经处理过的函数签名
+        processed_funcs = set()
+        if os.path.exists(self.llm_labelled_source_func_params_path):
+            try:
+                with open(self.llm_labelled_source_func_params_path, "r") as f:
+                    cached_data = json.load(f)
+                    for item in cached_data:
+                        key = (item.get("package"), item.get("class"), item.get("method"))
+                        processed_funcs.add(key)
+                self.project_logger.info(f"  ==> Found cached LLM-labelled functions: {len(processed_funcs)} (will be skipped)")
+            except Exception as e:
+                self.project_logger.warning(f"  ==> Failed to read cache {self.llm_labelled_source_func_params_path}: {e}")
+        else:
+            self.project_logger.info("  ==> No cached LLM-labelled functions found")
+
+        # Step 2. 原 dedup 逻辑（同你的代码）
         dedup_map = {}
         for (_, row) in candidates_csv.iterrows():
             key = (row["package"], row["clazz"], row["func"])
@@ -709,22 +868,32 @@ dependencies:
                 elif len(row["full_signature"]) > len(dedup_map[key]["full_signature"]):
                     dedup_map[key] = row
 
-        # Add doc into the candidates
-        candidates = [(key[0], key[1], key[2], row["full_signature"], self.extract_doc(row["doc"])) for (key, row) in dedup_map.items()]
+        # Step 3. 构建 candidates，同时跳过缓存中已经存在的函数
+        candidates = []
+        for (key, row) in dedup_map.items():
+            if key in processed_funcs:
+                continue  # 跳过已缓存
+            candidates.append((key[0], key[1], key[2], row["full_signature"], self.extract_doc(row["doc"])))
 
-        # Count the number of functions with documentations
+        # Step 4. 输出统计信息
         num_with_docs = len([() for cand in candidates if cand[4] != ""])
-        self.project_logger.info(f"  ==> #Candidate functions with source param: {len(candidates_csv)}; after deduplication: {len(candidates)}; with documentations: {num_with_docs}. Querying LLM...")
+        self.project_logger.info(
+            f"  ==> #Candidates before dedup: {len(candidates_csv)}; after dedup: {len(dedup_map)}; "
+            f"after skipping cached: {len(candidates)}; with docs: {num_with_docs}"
+        )
 
-        # Return
         return candidates
+
 
     def query_gpt_for_func_param_src(self):
         self.project_logger.info("==> Stage 4: Querying GPT for source function parameters...")
         if not os.path.exists(self.llm_labelled_source_func_params_path) or self.overwrite or self.overwrite_labelled_func_param:
             # 1. Get LLM and fetch information used for prompt
             system_prompt = FUNC_PARAM_LABELLING_SYSTEM_PROMPT
-            proj_description = self.fetch_project_description_from_readme()
+            # proj_description = self.fetch_project_description_from_readme()
+
+            # TODO: FIXME
+            proj_description = "a simple java project..."
             proj_username = self.project_name.split("_")[0]
             proj_name = self.project_name.split("_")[2]
 
@@ -743,6 +912,7 @@ dependencies:
                 # 4.2. Build the user prompt and dump it
                 user_prompt = FUNC_PARAM_LABELLING_USER_PROMPT.format(
                     project_username=proj_username,
+                    vulnerability_diff=self.diff_content,
                     project_name=proj_name,
                     project_readme_summary=proj_description,
                     methods=api_list_text)
@@ -764,7 +934,9 @@ dependencies:
             indiv_results = []
             responses = self.get_model().predict(indiv_prompts, batch_size=self.num_threads)
             for i, response in zip(args, responses):
-                json_result = self.parse_json(response)
+                # FIXME: parse_json函数存在问题，暂时用json.loads替代
+                # json_result = self.parse_json(response)
+                json_result = json.loads(response)
                 with open(f"{self.label_func_params_log_path}/raw_llm_response_{i}.txt", "w") as f:
                         f.write(response + "\n")
                 indiv_results.append(json_result)
@@ -777,9 +949,65 @@ dependencies:
             # 7. Save the result for this project
             self.project_logger.info(f"  ==> Finished querying LLM. #Function with source param: {len(merged_llm_results)}")
             if not self.test_run:
-                json.dump(merged_llm_results, open(self.llm_labelled_source_func_params_path, "w"), indent=2)
+                final_results = []
+
+                # Step 7.1. 如果已有缓存，先读取
+                if os.path.exists(self.llm_labelled_source_func_params_path):
+                    try:
+                        with open(self.llm_labelled_source_func_params_path, "r") as f:
+                            cached_data = json.load(f)
+                            final_results.extend(cached_data)
+                        self.project_logger.info(f"  ==> Loaded existing cached results: {len(cached_data)}")
+                    except Exception as e:
+                        self.project_logger.warning(f"  ==> Failed to load cache: {e}")
+
+                # Step 7.2. 合并新的结果
+                final_results.extend(merged_llm_results)
+
+                # Step 7.3. 去重（按 package, class, method）
+                unique_map = {}
+                for item in final_results:
+                    key = (item.get("package"), item.get("class"), item.get("method"))
+                    unique_map[key] = item  # 后面的覆盖前面的
+
+                final_deduped_results = list(unique_map.values())
+
+                # Step 7.4. 保存到文件
+                with open(self.llm_labelled_source_func_params_path, "w") as f:
+                    json.dump(final_deduped_results, f, indent=2)
+
+                self.project_logger.info(f"  ==> Saved merged results: total {len(final_deduped_results)} entries (including cached)")
         else:
             self.project_logger.info(f"  ==> Found labelled source function parameters. Skipping...")
+            self.project_logger.info("  ==> From logs labeled funcs args merged...")
+            original_labeled_func_params = json.loads(open(self.llm_labelled_source_func_params_path, "r").read())
+            
+            file_pattern = os.path.join(self.label_func_params_log_path, "*llm_response*.txt")
+            matching_files = glob.glob(file_pattern)
+
+            for file_path in matching_files:
+                with open(file_path, "r") as f:
+                    data_tmp = f.read()
+                    if not data_tmp.strip():continue
+                    try:
+                        # data = self.parse_json(data_tmp)
+                        data = json.loads(data_tmp)
+                        for item in data:
+                            original_labeled_func_params.append(item)
+
+                    except json.JSONDecodeError as e:
+                        print(f"Error decoding JSON from file {file_path}: {e}")
+                        continue
+                
+     
+            api_data = [
+                (original_labeled_func_params, self.llm_labelled_source_func_params_path),
+            ]
+
+            # 对每个列表去重并保存
+            for api_list, path in api_data:
+                unique_funcs = remove_duplicates(api_list)
+                json.dump(unique_funcs, open(path, "w"), indent=2)
 
     def not_none(self, d, keys):
         return isinstance(d, dict) and all([d.get(k, None) for k in keys])
@@ -787,7 +1015,11 @@ dependencies:
     def filter_invalid_entries(self, api_list):
         return [api for api in api_list if self.not_none(api, ["method", "class", "package", "signature"])]
 
+    def filter_invalid_entries_4sink(self, api_list):
+        return [api for api in api_list if self.not_none(api, ["method", "package", "signature"])]
+
     def build_source_qll_with_enumeration(self):
+        # 过滤属性为空的key
         source_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_apis_path)))
         source_api_entries = [
             QL_METHOD_CALL_SOURCE_BODY_ENTRY.format(
@@ -796,14 +1028,17 @@ dependencies:
                 clazz=api["class"],
             ) for api in source_apis
         ]
+        
+        ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON
+        ql_func_param_name_entry_tmp = QL_FUNC_PARAM_NAME_ENTRY if self.language == "java" else QL_FUNC_PARAM_NAME_ENTRY_PYTHON
         source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
         source_params_entries = [
-            QL_FUNC_PARAM_SOURCE_ENTRY.format(
+            ql_func_param_source_entry_tmp.format(
                 method=param_func["method"],
                 package=param_func["package"],
                 clazz=param_func["class"],
                 params=" or ".join([
-                    QL_FUNC_PARAM_NAME_ENTRY.format(
+                    ql_func_param_name_entry_tmp.format(
                         arg_name=arg_name
                     ) for arg_name in param_func["tainted_input"]
                 ]),
@@ -812,7 +1047,10 @@ dependencies:
             else "1 = 0"
             for param_func in source_params
         ]
-        all_entries = source_api_entries + source_params_entries
+        
+        # TODO: 不考虑external apis会作为source的情况
+        # all_entries = source_api_entries + source_params_entries
+        all_entries = source_params_entries
         if len(all_entries) == 0:
             all_entries = ["1 = 0"]
 
@@ -833,8 +1071,8 @@ dependencies:
         else:
             body = QL_BODY_OR_SEPARATOR.join(all_entries)
             additional = ""
-
-        my_source_content = QL_SOURCE_PREDICATE.format(body=body, additional=additional)
+        ql_source_predicate_tmp = QL_SOURCE_PREDICATE if self.language == "java" else QL_SOURCE_PREDICATE_PYTHON
+        my_source_content = ql_source_predicate_tmp.format(body=body, additional=additional)
         return my_source_content
 
     def build_and_save_source_qll_with_enumeration(self):
@@ -843,26 +1081,35 @@ dependencies:
             f.write(self.build_source_qll_with_enumeration())
 
     def build_and_save_source_qll_with_source_node(self):
-        my_source_content = QL_SOURCE_PREDICATE.format(
+        ql_source_predicate_tmp = QL_SOURCE_PREDICATE if self.language == "java" else QL_SOURCE_PREDICATE_PYTHON
+    
+        my_source_content = ql_source_predicate_tmp.format(
             body=f"sourceNode(src, \"{self.project_name}\")")
         os.makedirs(os.path.dirname(self.source_qll_path), exist_ok=True)
         with open(self.source_qll_path, "w") as f:
+            print(my_source_content)
             f.write(my_source_content)
 
     def build_taint_propagator_qll_with_enumeration(self):
         summary_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_taint_prop_apis_path)))
-
+        summary_funcs = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
+        
+        #FIXME: Merge function parameter based taint propagators
+        summary_apis = summary_apis + summary_funcs
+        
+        ql_summart_body_entry_tmp = QL_SUMMARY_BODY_ENTRY if self.language == "java" else QL_SUMMARY_BODY_ENTRY_PYTHON
         if len(summary_apis) == 0 or self.no_summary_model:
             body = "1 = 0"
         else:
             body = QL_BODY_OR_SEPARATOR.join([
-                QL_SUMMARY_BODY_ENTRY.format(
+                ql_summart_body_entry_tmp.format(
                     package=api["package"],
                     clazz=api["class"],
                     method=api["method"],
                 ) for api in summary_apis
             ])
-        my_summary_content = QL_STEP_PREDICATE.format(body=body)
+        ql_step_predicate_tmp = QL_STEP_PREDICATE if self.language == "java" else QL_STEP_PREDICATE_PYTHON
+        my_summary_content = ql_step_predicate_tmp.format(body=body)
         return my_summary_content
 
     def build_and_save_taint_propagator_qll_with_enumeration(self):
@@ -871,7 +1118,7 @@ dependencies:
             f.write(self.build_taint_propagator_qll_with_enumeration())
 
     def build_sink_qll_with_enumeration(self):
-        sink_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_sink_apis_path)))
+        sink_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_sink_apis_path)))
         if len(sink_apis) == 0:
             body = "1 = 0"
             additional = ""
@@ -879,22 +1126,40 @@ dependencies:
             def sink_body_entry(api):
                 if "sink_args" in api and \
                     any(
-                        len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
+                        # len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
+                        len(sink_arg) > 0 or str(sink_arg) == "this"
                         for sink_arg in api["sink_args"]
                     ):
-                    return QL_SINK_BODY_ENTRY.format(
-                        method=api["method"],
-                        package=api["package"],
-                        clazz=api["class"],
-                        args=" or ".join([
-                            QL_SINK_ARG_THIS_ENTRY if sink_arg == "this" else
-                            QL_SINK_ARG_NAME_ENTRY.format(
-                                arg_id=int(re.findall(r"[\S\s]*p([0-9]+)", sink_arg)[0]), # sink_arg will be `pX` where X is a number
-                            )
-                            for sink_arg in api["sink_args"]
-                            if len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
-                        ])
+                    ql_sink_body_entry_tmp = QL_SINK_BODY_ENTRY if self.language == "java" else (
+                        QL_SINK_BODY_ENTRY_PYTHON_KIND1
+                        if "." in api["signature"].split("(")[0].split()[-1] else
+                        QL_SINK_BODY_ENTRY_PYTHON_KIND2
                     )
+                    if self.language == "java":
+                        return ql_sink_body_entry_tmp.format(
+                            method=api["method"],
+                            package=api["package"],
+                            clazz=api["class"],
+                            args=" or ".join([
+                                QL_SINK_ARG_THIS_ENTRY if sink_arg == "this" else
+                                QL_SINK_ARG_NAME_ENTRY.format(
+                                    arg_id=int(re.findall(r"[\S\s]*p([0-9]+)", sink_arg)[0]), # sink_arg will be `pX` where X is a number
+                                )
+                                for sink_arg in api["sink_args"]
+                                if len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
+                            ])
+                        )
+                    elif "." in api["signature"].split("(")[0].split()[-1]:
+                        return ql_sink_body_entry_tmp.format(
+                            method=api["method"],
+                            package=api["package"],
+                            args=QL_SINK_ARG_NAME_ENTRY_PYTHON
+                        )
+                    else:
+                        return ql_sink_body_entry_tmp.format(
+                            method=api["method"],
+                            args=QL_SINK_ARG_NAME_ENTRY_PYTHON
+                        )
                 else:
                     return "1 = 0"
 
@@ -918,7 +1183,8 @@ dependencies:
             else:
                 body = sink_body(sink_apis)
                 additional = ""
-        my_sink_content = QL_SINK_PREDICATE.format(body=body, additional=additional)
+        ql_sink_predicate_tmp = QL_SINK_PREDICATE if self.language == "java" else QL_SINK_PREDICATE_PYTHON
+        my_sink_content = ql_sink_predicate_tmp.format(body=body, additional=additional)
         return my_sink_content
 
     def build_and_save_sink_qll_with_enumeration(self):
@@ -937,7 +1203,7 @@ dependencies:
         # First load labelled sources, sinks, and taint-propagators
         source_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_apis_path)))
         source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
-        sink_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_sink_apis_path)))
+        sink_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_sink_apis_path)))
         taint_prop_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_taint_prop_apis_path)))
 
         # Convert into entries
@@ -973,9 +1239,9 @@ dependencies:
             for sink_api in sink_apis if isinstance(sink_api, dict)
             # for arg_name in sink_api["sink_args"]
         ])
-
+        extension_yml_template_tmp = EXTENSION_YML_TEMPLATE if self.language == "java" else EXTENSION_YML_TEMPLATE_PYTHON
         # Build the final yaml
-        yml_content = EXTENSION_YML_TEMPLATE.format(
+        yml_content = extension_yml_template_tmp.format(
             sources="\n".join([source_api_entries, source_func_parm_entries]),
             sinks=sink_api_entries)
 
@@ -1013,43 +1279,52 @@ dependencies:
     def find_vulnerability(self):
         self.project_logger.info("==> Stage 6: Finding vulnerabilities with CodeQL...")
 
-        # Step 0: Check if result already exists
-        if os.path.exists(self.query_output_result_sarif_path) and not self.overwrite and not self.overwrite_cwe_query_result:
-            self.project_logger.info(f"  ==> Found existing {self.query} results; skipping...")
-            return
+        # # Step 0: Check if result already exists
+        # if os.path.exists(self.query_output_result_sarif_path) and not self.overwrite and not self.overwrite_cwe_query_result:
+        #     self.project_logger.info(f"  ==> Found existing {self.query} results; skipping...")
+        #     return
         if self.test_run:
             self.project_logger.info(f"  ==> Test run; skipping...")
             return
 
         # Step 1: Copy static query files if needed
         self.project_logger.info("  ==> Copying custom queries...")
-        codeql_query_dir = f"{self.custom_codeql_root}/{self.query}"
+        query_tmp = self.query if not self.general else "cwe-generalwLLM"
+        
+        codeql_query_dir = f"{self.custom_codeql_root}/{query_tmp}" if not self.general else f"{self.custom_codeql_root}/general"
         os.makedirs(codeql_query_dir, exist_ok=True)
-        for q in QUERIES[self.query]["queries"]:
+        
+        query_list =  QUERIES[query_tmp]["queries"] if self.language == "java" else \
+            QUERIES[query_tmp]["queries"][:2] if self.language == "python" else QUERIES[query_tmp]["queries"][2:] 
+        for q in query_list:  # Only copy the first two files (ql and qll)
             query_dest_path = f"{codeql_query_dir}/{q.split('/')[-1]}"
             if not os.path.exists(query_dest_path):
                 shutil.copy(f"{THIS_SCRIPT_DIR}/{q}", query_dest_path)
             self.project_logger.info(f"  ==> Query {q.split('/')[-1]} ready... Done!")
-
         # Step 2: Run codeql analyze and produce sarif and csv
         self.project_logger.info("  ==> Running CodeQL analysis...")
-        query_filename = QUERIES[self.query]["queries"][0].split("/")[-1]
+        query_filename = query_list[0].split("/")[-1]
         to_run_query_full_path = f"{codeql_query_dir}/{query_filename}"
 
         # Add search paths for both the built-in CodeQL packs and our custom pack
         search_paths = [
-            f"{CODEQL_DIR}/qlpacks",  # Built-in CodeQL packs
+            # f"{CODEQL_DIR}/qlpacks/codeql",  # Built-in CodeQL packs
+            "/data_hdd/tzh24/.codeql/packages/codeql",
             self.custom_codeql_root   # Our custom qlpack root
         ]
+
         search_path_args = []
         for path in search_paths:
             search_path_args.extend(["--search-path", path])
 
         # Run SARIF analysis
-        sarif_cmd = [CODEQL, "database", "analyze", "--rerun"] + search_path_args + [
+        sarif_cmd = ["codeql", "database", "analyze", "--rerun"] + search_path_args + [
             self.project_codeql_db_path, "--format=sarif-latest", 
             f"--output={self.query_output_result_sarif_path}", to_run_query_full_path
         ]
+
+        print(666, sarif_cmd)
+        exit(1)
         sp.run(sarif_cmd)
         if not os.path.exists(self.query_output_result_sarif_path):
             self.project_logger.error("  ==> Result SARIF not produced; aborting"); return
@@ -1272,6 +1547,7 @@ dependencies:
            and not self.posthoc_filtering_rerun_skipped_fp \
            or self.evaluation_only:
             self.master_logger.info(f"==> Cached final result found; skipping")
+            self.find_vulnerability()
             self.post_process_cwe_query_result()
             self.evaluate_result()
             self.debug_result()
@@ -1280,20 +1556,27 @@ dependencies:
         # 1. Collect all the invoked external APIs
         self.collect_invoked_external_apis()
 
+
+
         # 2. Collect all the internal function parameters
         self.collect_internal_function_parameters()
 
+        # exit(111)
         # 3. Query GPT for source/taint-propagator/sink from external APIs
         self.query_gpt_for_api_src_tp_sink_batched()
 
+        # exit(111)
+        
         # 4. Query GPT for sources among internal function parameters
         self.query_gpt_for_func_param_src()
+
 
         # 5. Build local query for this project
         self.build_project_specific_query()
 
         # 6. Send the local query for vulnerability detection
         self.find_vulnerability()
+
 
         # 7. Do a post-processing step for rule-based filtering of paths
         self.post_process_cwe_query_result()
@@ -1342,6 +1625,9 @@ if __name__ == '__main__':
     parser.add_argument("--debug-source", action="store_true")
     parser.add_argument("--debug-sink", action="store_true")
     parser.add_argument("--test-run", action="store_true")
+    parser.add_argument("--language", type=str, default="java")
+    parser.add_argument("--diff-path", type=str, default="")
+    parser.add_argument("--general", action="store_true")
     args = parser.parse_args()
 
     # Set basic properties
@@ -1380,6 +1666,9 @@ if __name__ == '__main__':
         debug_source=args.debug_source,
         debug_sink=args.debug_sink,
         test_run=args.test_run,
+        language=args.language,
+        diff_path=args.diff_path,
+        general=args.general
     )
 
     pipeline.run()

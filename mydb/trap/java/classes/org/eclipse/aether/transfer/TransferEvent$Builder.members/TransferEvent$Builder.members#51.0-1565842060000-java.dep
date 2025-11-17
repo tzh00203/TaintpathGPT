@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/transfer/TransferEvent$Builder.members/TransferEvent$Builder.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/transfer/TransferEvent$Builder.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/transfer/TransferEvent.members.trap.gz
+classes/java/lang/Exception.members.trap.gz
+classes/java/nio/ByteBuffer.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/eclipse/aether/transfer/TransferEvent$RequestType.members.trap.gz
+classes/org/eclipse/aether/transfer/TransferEvent$EventType.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz
+classes/org/eclipse/aether/transfer/TransferResource.members.trap.gz

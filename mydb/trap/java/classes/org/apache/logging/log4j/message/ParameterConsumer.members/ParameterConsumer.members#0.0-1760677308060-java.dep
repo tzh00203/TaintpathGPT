@@ -1,0 +1,8 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/ParameterConsumer.members/ParameterConsumer.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/ParameterConsumer.members.trap.gz
+classes/java/lang/Object.members.trap.gz

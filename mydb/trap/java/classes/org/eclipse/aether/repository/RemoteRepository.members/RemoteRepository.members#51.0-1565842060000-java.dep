@@ -1,0 +1,17 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/RemoteRepository.members/RemoteRepository.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/repository/ArtifactRepository.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/eclipse/aether/repository/Authentication.members.trap.gz
+classes/org/eclipse/aether/repository/Proxy.members.trap.gz
+classes/org/eclipse/aether/repository/RepositoryPolicy.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository$Builder.members.trap.gz

@@ -1,0 +1,9 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/osgi/framework/BundleListener.members/BundleListener.members#49.0-1351561296000-java.trap.gz
+
+TRAPS
+classes/org/osgi/framework/BundleListener.members.trap.gz
+classes/java/util/EventListener.members.trap.gz
+classes/org/osgi/framework/BundleEvent.members.trap.gz

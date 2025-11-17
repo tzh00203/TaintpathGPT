@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/project/artifact/InvalidDependencyVersionException.members/InvalidDependencyVersionException.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/project/artifact/InvalidDependencyVersionException.members.trap.gz
+classes/org/apache/maven/project/InvalidProjectVersionException.members.trap.gz
+classes/org/apache/maven/model/Dependency.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/io/File.members.trap.gz
+classes/org/apache/maven/artifact/versioning/InvalidVersionSpecificationException.members.trap.gz

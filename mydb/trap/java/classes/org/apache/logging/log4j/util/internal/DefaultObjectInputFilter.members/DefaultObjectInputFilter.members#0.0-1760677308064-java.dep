@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/internal/DefaultObjectInputFilter.members/DefaultObjectInputFilter.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/internal/DefaultObjectInputFilter.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/ObjectInputFilter.members.trap.gz
+classes/java/io/ObjectInputFilter$FilterInfo.members.trap.gz
+classes/java/io/ObjectInputFilter$Status.members.trap.gz
+classes/java/lang/Override.members.trap.gz

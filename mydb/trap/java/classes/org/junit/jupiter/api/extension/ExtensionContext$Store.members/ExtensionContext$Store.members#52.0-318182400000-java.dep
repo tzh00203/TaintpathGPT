@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/junit/jupiter/api/extension/ExtensionContext$Store.members/ExtensionContext$Store.members#52.0-318182400000-java.trap.gz
+
+TRAPS
+classes/org/junit/jupiter/api/extension/ExtensionContext$Store.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/api/extension/ExtensionContext.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz
+classes/java/util/function/Function.members.trap.gz
+classes/java/lang/FunctionalInterface.members.trap.gz
+classes/org/apiguardian/api/API.members.trap.gz
+classes/org/apiguardian/api/API$Status.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz

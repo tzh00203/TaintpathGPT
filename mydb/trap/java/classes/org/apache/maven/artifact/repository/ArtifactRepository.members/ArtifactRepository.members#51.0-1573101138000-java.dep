@@ -1,0 +1,19 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/artifact/repository/ArtifactRepository.members/ArtifactRepository.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/artifact/repository/ArtifactRepository.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/apache/maven/repository/Proxy.members.trap.gz
+classes/org/apache/maven/artifact/repository/Authentication.members.trap.gz
+classes/org/apache/maven/artifact/Artifact.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz
+classes/org/apache/maven/artifact/repository/layout/ArtifactRepositoryLayout.members.trap.gz
+classes/org/apache/maven/artifact/repository/ArtifactRepositoryPolicy.members.trap.gz
+classes/org/apache/maven/artifact/metadata/ArtifactMetadata.members.trap.gz

@@ -1,0 +1,21 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/simple/SimpleLogger.members/SimpleLogger.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/simple/SimpleLogger.members.trap.gz
+classes/org/apache/logging/log4j/spi/AbstractLogger.members.trap.gz
+classes/java/io/PrintStream.members.trap.gz
+classes/org/apache/logging/log4j/Level.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/Marker.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/CharSequence.members.trap.gz
+classes/org/apache/logging/log4j/message/MessageFactory.members.trap.gz
+classes/org/apache/logging/log4j/util/PropertiesUtil.members.trap.gz

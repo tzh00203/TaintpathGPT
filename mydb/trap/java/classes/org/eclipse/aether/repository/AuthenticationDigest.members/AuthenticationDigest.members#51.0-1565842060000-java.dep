@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/AuthenticationDigest.members/AuthenticationDigest.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/AuthenticationDigest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/eclipse/aether/repository/Proxy.members.trap.gz
+classes/org/eclipse/aether/repository/RemoteRepository.members.trap.gz
+classes/org/eclipse/aether/RepositorySystemSession.members.trap.gz

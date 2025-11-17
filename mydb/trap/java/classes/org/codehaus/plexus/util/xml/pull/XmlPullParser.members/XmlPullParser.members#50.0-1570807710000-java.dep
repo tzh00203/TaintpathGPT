@@ -1,0 +1,15 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/codehaus/plexus/util/xml/pull/XmlPullParser.members/XmlPullParser.members#50.0-1570807710000-java.trap.gz
+
+TRAPS
+classes/org/codehaus/plexus/util/xml/pull/XmlPullParser.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/codehaus/plexus/util/xml/pull/XmlPullParserException.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/io/InputStream.members.trap.gz
+classes/java/io/Reader.members.trap.gz

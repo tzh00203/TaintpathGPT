@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/LambdaUtil.members/LambdaUtil.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/LambdaUtil.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/util/Supplier.members.trap.gz
+classes/org/apache/logging/log4j/message/MessageFactory.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/org/apache/logging/log4j/util/MessageSupplier.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz

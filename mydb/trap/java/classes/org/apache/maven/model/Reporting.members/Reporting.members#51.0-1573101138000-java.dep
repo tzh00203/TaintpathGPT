@@ -1,0 +1,18 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/model/Reporting.members/Reporting.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/model/Reporting.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/org/apache/maven/model/InputLocationTracker.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/maven/model/ReportPlugin.members.trap.gz
+classes/java/util/List.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/org/apache/maven/model/InputLocation.members.trap.gz

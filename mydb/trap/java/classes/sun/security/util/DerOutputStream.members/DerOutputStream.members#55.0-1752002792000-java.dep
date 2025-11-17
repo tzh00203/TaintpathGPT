@@ -1,0 +1,21 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/sun/security/util/DerOutputStream.members/DerOutputStream.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/sun/security/util/DerOutputStream.members.trap.gz
+classes/java/io/ByteArrayOutputStream.members.trap.gz
+classes/sun/security/util/DerEncoder.members.trap.gz
+classes/java/io/OutputStream.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/java/util/Date.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/sun/security/util/DerValue.members.trap.gz
+classes/sun/security/util/ObjectIdentifier.members.trap.gz
+classes/sun/security/util/BitArray.members.trap.gz
+classes/java/lang/Integer.members.trap.gz
+classes/java/math/BigInteger.members.trap.gz

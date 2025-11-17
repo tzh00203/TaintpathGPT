@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/nio/Buffer.members/Buffer.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/nio/Buffer.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/jdk/internal/HotSpotIntrinsicCandidate.members.trap.gz
+classes/java/lang/IllegalArgumentException.members.trap.gz
+classes/jdk/internal/misc/Unsafe.members.trap.gz

@@ -1,0 +1,21 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/ObjectMapMessage.members/ObjectMapMessage.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/ObjectMapMessage.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/message/MapMessage.members.trap.gz
+classes/org/apache/logging/log4j/util/MultiFormatStringBuilderFormattable.members.trap.gz
+classes/org/apache/logging/log4j/message/AsynchronouslyFormattable.members.trap.gz
+classes/org/apache/logging/log4j/util/PerformanceSensitive.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/java/lang/StringBuilder.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/org/apache/logging/log4j/util/TriConsumer.members.trap.gz
+classes/org/apache/logging/log4j/util/BiConsumer.members.trap.gz
+classes/org/apache/logging/log4j/util/IndexedReadOnlyStringMap.members.trap.gz

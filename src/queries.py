@@ -560,7 +560,7 @@ or network egress filtering where possible.""",
           "class": "HttpServletRequest",
           "method": "getParameter",
           "signature": "String getParameter(String name)",
-          "type": "source"
+          "type": "taint-propagator"
         },
         {
           "package": "org.apache.http.client",
@@ -569,6 +569,13 @@ or network egress filtering where possible.""",
           "signature": "HttpResponse execute(HttpUriRequest request)",
           "sink_args": ["request"],
           "type": "sink"
+        },
+        {
+          "package": "java.lang.reflect",
+          "class": "Method",
+          "method": "invoke",
+          "signature": "Object invoke(Object p0, Object[] p1)",
+          "type": "taint-propagator"
         },
         {
           "package": "java.net",
@@ -673,17 +680,75 @@ Sources typically include untrusted HTTP request parameters (such as 'callback')
   }
 },
 
+"cwe-generalwLLM": {
+    "name": "cwe-generalwLLM",
+    "type": "cwe-query",
+    "cwe_id": "general",
+    "cwe_id_short": "general",
+    "cwe_id_tag": "CWE-general",
+    "desc": "General Taintflow CWE Detection",
+    "queries": [
+      "cwe-queries/python-general/query.ql",
+      "cwe-queries/python-general/MyTaintFlow.qll",
+      "cwe-queries/java-general/query.ql",
+      "cwe-queries/java-general/MyTaintFlow.qll",
+    ],
+    "prompts": {
+      "cwe_id": "CWE-general",
+      "desc": "General Taintflow CWE Detection",
+      "long_desc": """\
+      TODO: add general taintflow cwe desc.
+      """,
+      "examples": [
+        {
+          "package": "java.util.zip",
+          "class": "ZipEntry",
+          "method": "getName",
+          "signature": "String getName()",
+            "sink_args": [],
+          "type": "source",
+        },
+        {
+          "package": "java.io",
+          "class": "FileInputStream",
+          "method": "FileInputStream",
+          "signature": "FileInputStream(File file)",
+          "sink_args" : ["file"],
+          "type": "sink",
+        },
+        {
+          "package": "java.net",
+          "class": "URL",
+          "method": "URL",
+          "signature": "URL(String url)",
+            "sink_args": [],
+          "type": "taint-propagator",
+        },
+        {
+            "package": "java.io",
+            "class": "File",
+            "method": "File",
+            "signature": "File(String path)",
+            "sink_args": [],
+          "type": "taint-propagator",
+        },
+      ]
+    }
+  },
 
   "fetch_external_apis": {
     "name": "fetch_external_apis",
     "queries": [
-      "queries/fetch_external_apis.ql"
+      "queries/fetch_external_apis.ql",
+      "queries/fetch_external_apis_python.py",
+      "queries/fetch_external_apis_python.py"
     ]
   },
   "fetch_func_params": {
     "name": "fetch_func_params",
     "queries": [
-      "queries/fetch_func_params.ql"
+      "queries/fetch_func_params.ql",
+      "queries/fetch_func_params_python.py"
     ]
   },
   "fetch_func_locs": {

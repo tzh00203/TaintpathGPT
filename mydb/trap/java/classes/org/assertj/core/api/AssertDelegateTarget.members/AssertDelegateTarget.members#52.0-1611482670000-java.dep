@@ -1,0 +1,8 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/AssertDelegateTarget.members/AssertDelegateTarget.members#52.0-1611482670000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/AssertDelegateTarget.members.trap.gz
+classes/java/lang/Object.members.trap.gz

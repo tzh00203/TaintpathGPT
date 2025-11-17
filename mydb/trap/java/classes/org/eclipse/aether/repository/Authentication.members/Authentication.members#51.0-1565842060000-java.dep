@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/eclipse/aether/repository/Authentication.members/Authentication.members#51.0-1565842060000-java.trap.gz
+
+TRAPS
+classes/org/eclipse/aether/repository/Authentication.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/eclipse/aether/repository/AuthenticationDigest.members.trap.gz
+classes/org/eclipse/aether/repository/AuthenticationContext.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/util/Map.members.trap.gz

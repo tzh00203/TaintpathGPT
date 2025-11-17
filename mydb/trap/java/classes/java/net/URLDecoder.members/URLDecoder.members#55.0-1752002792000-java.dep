@@ -1,0 +1,12 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/java/net/URLDecoder.members/URLDecoder.members#55.0-1752002792000-java.trap.gz
+
+TRAPS
+classes/java/net/URLDecoder.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/nio/charset/Charset.members.trap.gz
+classes/java/io/UnsupportedEncodingException.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz

@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/DefaultThreadContextStack.members/DefaultThreadContextStack.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/DefaultThreadContextStack.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/spi/ThreadContextStack.members.trap.gz
+classes/org/apache/logging/log4j/util/StringBuilderFormattable.members.trap.gz
+classes/org/apache/logging/log4j/ThreadContext$ContextStack.members.trap.gz
+classes/java/lang/Override.members.trap.gz
+classes/java/lang/StringBuilder.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/util/Collection.members.trap.gz
+classes/java/lang/Iterable.members.trap.gz
+classes/java/util/Iterator.members.trap.gz
+classes/java/util/List.members.trap.gz

@@ -1,0 +1,20 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/LambdaLoggerTest.members/LambdaLoggerTest.members#0.0-1760677308056-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/LambdaLoggerTest.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/junit/jupiter/api/Test.members.trap.gz
+classes/org/junit/jupiter/api/BeforeEach.members.trap.gz
+classes/org/apache/logging/log4j/util/Supplier.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/org/apache/logging/log4j/LambdaLoggerTest$MySupplier.members.trap.gz
+classes/org/apache/logging/log4j/LambdaLoggerTest$MyMessageSupplier.members.trap.gz
+classes/org/apache/logging/log4j/Marker.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz
+classes/org/apache/logging/log4j/message/Message.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/LambdaLoggerTest$Logger2Impl.members.trap.gz

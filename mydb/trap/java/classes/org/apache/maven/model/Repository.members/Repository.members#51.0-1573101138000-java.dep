@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/model/Repository.members/Repository.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/model/Repository.members.trap.gz
+classes/org/apache/maven/model/RepositoryBase.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/org/apache/maven/model/RepositoryPolicy.members.trap.gz

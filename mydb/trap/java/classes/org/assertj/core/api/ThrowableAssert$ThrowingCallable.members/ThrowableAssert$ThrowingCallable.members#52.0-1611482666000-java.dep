@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/ThrowableAssert$ThrowingCallable.members/ThrowableAssert$ThrowingCallable.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/ThrowableAssert$ThrowingCallable.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/ThrowableAssert.members.trap.gz
+classes/java/lang/Throwable.members.trap.gz

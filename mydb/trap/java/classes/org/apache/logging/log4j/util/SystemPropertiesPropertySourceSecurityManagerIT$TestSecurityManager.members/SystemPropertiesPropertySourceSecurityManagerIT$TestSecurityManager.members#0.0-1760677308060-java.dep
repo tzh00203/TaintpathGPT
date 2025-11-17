@@ -1,0 +1,11 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceSecurityManagerIT$TestSecurityManager.members/SystemPropertiesPropertySourceSecurityManagerIT$TestSecurityManager.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceSecurityManagerIT$TestSecurityManager.members.trap.gz
+classes/java/lang/SecurityManager.members.trap.gz
+classes/org/apache/logging/log4j/util/SystemPropertiesPropertySourceSecurityManagerIT.members.trap.gz
+classes/java/security/Permission.members.trap.gz
+classes/java/lang/Override.members.trap.gz

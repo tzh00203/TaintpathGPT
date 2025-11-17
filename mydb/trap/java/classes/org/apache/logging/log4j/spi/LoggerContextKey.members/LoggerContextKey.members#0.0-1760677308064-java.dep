@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/spi/LoggerContextKey.members/LoggerContextKey.members#0.0-1760677308064-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/spi/LoggerContextKey.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/lang/Deprecated.members.trap.gz
+classes/java/lang/String.members.trap.gz
+classes/org/apache/logging/log4j/message/MessageFactory.members.trap.gz
+classes/java/lang/Class.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/reflect/GenericDeclaration.members.trap.gz
+classes/java/lang/reflect/Type.members.trap.gz
+classes/java/lang/reflect/AnnotatedElement.members.trap.gz

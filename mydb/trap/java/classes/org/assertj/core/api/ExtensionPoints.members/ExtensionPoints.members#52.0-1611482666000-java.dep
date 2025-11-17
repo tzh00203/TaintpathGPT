@@ -1,0 +1,10 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/assertj/core/api/ExtensionPoints.members/ExtensionPoints.members#52.0-1611482666000-java.trap.gz
+
+TRAPS
+classes/org/assertj/core/api/ExtensionPoints.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/assertj/core/api/Condition.members.trap.gz
+classes/org/assertj/core/api/Descriptable.members.trap.gz

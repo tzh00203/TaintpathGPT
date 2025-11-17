@@ -1,0 +1,16 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/logging/log4j/message/ThreadDumpMessage$BasicThreadInfoFactory.members/ThreadDumpMessage$BasicThreadInfoFactory.members#0.0-1760677308060-java.trap.gz
+
+TRAPS
+classes/org/apache/logging/log4j/message/ThreadDumpMessage$BasicThreadInfoFactory.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/org/apache/logging/log4j/message/ThreadDumpMessage$ThreadInfoFactory.members.trap.gz
+classes/org/apache/logging/log4j/message/ThreadDumpMessage.members.trap.gz
+classes/java/util/Map.members.trap.gz
+classes/org/apache/logging/log4j/message/ThreadInformation.members.trap.gz
+classes/java/lang/StackTraceElement.members.trap.gz
+classes/java/lang/Cloneable.members.trap.gz
+classes/java/io/Serializable.members.trap.gz
+classes/java/lang/Override.members.trap.gz

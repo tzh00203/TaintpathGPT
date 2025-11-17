@@ -1,0 +1,14 @@
+TRAP dependencies 1.2
+
+TRAP
+classes/org/apache/maven/model/io/xpp3/MavenXpp3Reader.members/MavenXpp3Reader.members#51.0-1573101138000-java.trap.gz
+
+TRAPS
+classes/org/apache/maven/model/io/xpp3/MavenXpp3Reader.members.trap.gz
+classes/java/lang/Object.members.trap.gz
+classes/java/io/InputStream.members.trap.gz
+classes/org/apache/maven/model/Model.members.trap.gz
+classes/java/io/IOException.members.trap.gz
+classes/org/codehaus/plexus/util/xml/pull/XmlPullParserException.members.trap.gz
+classes/java/io/Reader.members.trap.gz
+classes/org/apache/maven/model/io/xpp3/MavenXpp3Reader$ContentTransformer.members.trap.gz
