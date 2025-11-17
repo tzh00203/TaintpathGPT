@@ -11,3 +11,7 @@ data/project-sources
 log/
 config.json
 test/
+1.py
+parsed_results.json
+results.sarif
+summary_report.json
