@@ -1,0 +1,13 @@
+uploadOvaFile
+invokeServiceWithMultipartFormData
+invokeServiceWithJson
+invokeService
+format
+replace
+handleBinUpload
+coverageStorePut
+coverageStorePost
+dataStorePut
+get
+updateFile
+createShortenedURL

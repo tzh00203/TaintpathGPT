@@ -10,6 +10,8 @@ def remove_duplicates(api_list):
     unique_apis = []
     for api in api_list:
         # 处理字典中的每个值，使其变为可哈希
+        # print(api)
+        if type(api) is not dict:continue
         api_hashable = {k: make_hashable(v) for k, v in api.items()}
         api_tuple = frozenset(api_hashable.items())  # 使用处理后的字典项
         if api_tuple not in seen:

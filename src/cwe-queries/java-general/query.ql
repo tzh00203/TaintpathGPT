@@ -8,9 +8,11 @@
  * @id python/generic-taint-flow
  * @tags security
  */
-import python
-import semmle.python.dataflow.new.DataFlow
-import semmle.python.dataflow.new.TaintTracking
+import java
+import semmle.code.java.dataflow.DataFlow
+import semmle.code.java.frameworks.javaee.ejb.EJBRestrictions
+private import semmle.code.java.dataflow.FlowSources
+private import semmle.code.java.dataflow.ExternalFlow
 import MyFlow
 import MyTaintFlow::PathGraph
 

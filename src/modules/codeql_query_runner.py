@@ -27,7 +27,7 @@ class CodeQLQueryRunner:
         self.project_source_path = ENTRY_SCRIPT_DIR.replace("src", "") + "data/project-sources/" + project_codeql_db_path.split("/")[-1]
       
 
-    def run(self, query, target_csv_path=None, suffix=None, dyn_queries={}):
+    def run(self, query, target_csv_path=None, suffix=None, dyn_queries={}, language_marker=None):
         """
         :param query, is a string that should be a key in the QUERIES dictionary
         :param target_csv_path, is a path where the result csv should be stored to
@@ -45,9 +45,13 @@ class CodeQLQueryRunner:
         os.makedirs(codeql_query_dir, exist_ok=True)
 
         # 2. Copy the basic queries and supporting queries to the codeql directory
-        for q in QUERIES[query]["queries"]:
-            shutil.copy(f"{ENTRY_SCRIPT_DIR}/{q}", f"{codeql_query_dir}/")
-
+        if language_marker is not None:
+            for q in QUERIES[query]["queries"]:
+                if language_marker in q:
+                    shutil.copy(f"{ENTRY_SCRIPT_DIR}/{q}", f"{codeql_query_dir}/")
+        else:
+            for q in QUERIES[query]["queries"]:
+                shutil.copy(f"{ENTRY_SCRIPT_DIR}/{q}", f"{codeql_query_dir}/")
         # 3. Write the dynamic queries
         for dyn_query_name, content in dyn_queries.items():
             with open(f"{codeql_query_dir}/{dyn_query_name}", "w") as f:
@@ -64,10 +68,11 @@ class CodeQLQueryRunner:
         os.makedirs(query_result_path, exist_ok=True)
 
         # 5. Run the query and generate result bqrs
-        if self.language == "java":
+        if self.language == "java" or (self.language == "python" and main_query.endswith(".ql")):
             # 原有的CodeQL查询执行方式
-            print([CODEQL, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
-            sp.run([CODEQL, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
+            codeql_tmp = CODEQL if self.language == "java" else f"codeql"
+            print([codeql_tmp, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
+            sp.run([codeql_tmp, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
         else:  # python
             # Python脚本执行方式
             project_source_path = self.project_source_path  # 需要确保这个属性存在，指向项目源代码目录
@@ -90,8 +95,9 @@ class CodeQLQueryRunner:
                     exit(1)
 
         # 6. Decode the query (仅适用于Java/CodeQL)
-        if self.language == "java":
-            sp.run([CODEQL, "bqrs", "decode", query_result_bqrs_path, "--format=csv", f"--output={query_result_csv_path}"])
+        if (self.language == "java") or (self.language == "python" and main_query.endswith(".ql")):
+            codeql_tmp = CODEQL if self.language == "java" else f"codeql"
+            sp.run([codeql_tmp, "bqrs", "decode", query_result_bqrs_path, "--format=csv", f"--output={query_result_csv_path}"])
             if not os.path.exists(query_result_csv_path):
                 self.project_logger.error(f"  ==> Failed to decode result bqrs from `{query}`; aborting")
                 exit(1)

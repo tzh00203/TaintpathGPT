@@ -44,6 +44,7 @@ class ContextualAnalysisPipeline:
             rerun_skipped_fp: bool = False,
             skip_check_fixed_method: bool = False,
             batch_size: int = 3,
+            vulnerability_patch: str = "",
     ):
         self.query = query
         self.cwe_id = cwe_id
@@ -68,6 +69,7 @@ class ContextualAnalysisPipeline:
         self.batch_size = batch_size
         self.skip_check_fixed_method = skip_check_fixed_method
         self.alarm_results = {}
+        self.vulnerability_patch = vulnerability_patch
 
     def get_model(self):
         if self.model is None:
@@ -166,7 +168,7 @@ class ContextualAnalysisPipeline:
         :param enclosing_func_locs, { <FILE>: [ (<FUNC_NAME>, <START_LINE>, <END_LINE>) ] }
         """
         # Get the file lines
-        file_dir = f"{self.project_source_code_dir}/{loc['file_url']}"
+        file_dir = f"{self.project_source_code_dir}/{loc['file_url']}" if not loc['file_url'].startswith("/") else loc['file_url']
         if not os.path.exists(file_dir):
             print("Not found ", file_dir)
             return None, (None, None, None)
@@ -176,7 +178,10 @@ class ContextualAnalysisPipeline:
         start_line, end_line = loc['start_line'], loc['end_line']
 
         # Get the enclosing class
-        class_start_end = self.find_enclosing_declaration(start_line, end_line, enclosing_class_locs[loc["file_url"]])
+        try:
+            class_start_end = self.find_enclosing_declaration(start_line, end_line, enclosing_class_locs[loc["file_url"]])
+        except KeyError:
+            class_start_end = None
         if class_start_end:
             class_decl_str = file_lines[class_start_end[1] - 1].strip()
             if class_decl_str == "":
@@ -275,7 +280,9 @@ class ContextualAnalysisPipeline:
             source=start_snippet,
             intermediate_steps=intermediate_steps,
             sink_msg=end_loc["message"],
-            sink=end_snippet)
+            sink=end_snippet,
+            vulnerability_patch=self.vulnerability_patch,
+                )
         return prompt
 
     def parse_boolean(self, value):

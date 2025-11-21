@@ -41,6 +41,7 @@ from src.modules.evaluation_pipeline import EvaluationPipeline
 
 from src.models.llm import LLM
 from src.utils.general_utils import *
+from src.utils.manual_queries import *
 
 CODEQL = f"{CODEQL_DIR}/codeql"
 
@@ -53,6 +54,16 @@ PRIMITIVE_TYPES = set([
     "Boolean",
     "Object",
 ])
+
+PYTHON_PROJ_NAME_PREFIX = [
+    "QAnything-1.4.1.", 
+    "Shakal-NG-1.3.2.", 
+    "langchain-langchain-openai-0.1.17.", 
+    "langroid-0.53.14.", 
+    "horilla-1.3.", 
+    "BentoML-1.4.10.", 
+    "pyload-f34052df70a193948c1a19332a1f02c7b9bc362d."
+    ]
 
 MAX_DOC_LENGTH = 50
 
@@ -134,7 +145,8 @@ class SAPipeline:
 
         self.language = language
         self.general = general
-
+        self.taint_propagator_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_taint_propagator_{self.language}.txt", "r").read().split("\n")
+        self.source_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_source_{self.language}.txt", "r").read().split("\n") 
         # Setup logger
         if not self.no_logger:
             self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
@@ -158,7 +170,8 @@ class SAPipeline:
 
         # Load some basic information, such as commits and fixes related to the CVE
         self.project_source_code_dir = f"{PROJECT_SOURCE_CODE_DIR}/{self.project_name}"
-
+        self.vulnerability_patch_path = self.project_source_code_dir + "/" + "diff.txt"
+        self.vulnerability_patch = open(self.vulnerability_patch_path, "r").read() if os.path.exists(self.vulnerability_patch_path) else ""
         self.diff_path = str(self.project_source_code_dir)+ "/" + "diff.txt"
         self.diff_content = open(self.diff_path, "r").read() if os.path.exists(self.diff_path) else ""
 
@@ -203,8 +216,8 @@ class SAPipeline:
         os.makedirs(self.analysis_cwe_path, exist_ok=True)
 
         # Setup custom CodeQL qlpack structure
-        self.custom_codeql_root = f"{self.project_output_path}/myqueries"
-
+        self.custom_codeql_root = f"{self.project_output_path}/myqueries/"
+        self.pack_lock_yml = f"{self.custom_codeql_root}/codeql-pack.lock.yml"
         # Create qlpack.yml for the custom package
         self._create_custom_qlpack_yml()
 
@@ -660,9 +673,9 @@ dependencies:
   
             responses = self.get_model().predict(indiv_prompts, batch_size=self.num_threads)
             for i, response in zip(args, responses):
-                json_result = json.loads(response)
                 with open(f"{self.label_api_log_path}/raw_llm_response_{i}.txt", "w") as f:
                     f.write(str(response) + "\n")
+                json_result = json.loads(response)
                 indiv_results.append(json_result)
 
             # 6. Merge all the results
@@ -705,6 +718,7 @@ dependencies:
                         # data = self.parse_json(data_tmp)
                         data = json.loads(data_tmp)
                         for item in data:
+                            if type(item) != dict:continue
                             if item.get("type", "") == "sink":
                                 original_labeled_api_sink.append(item)
                             elif item.get("type", "") == "source":
@@ -1016,44 +1030,55 @@ dependencies:
         return [api for api in api_list if self.not_none(api, ["method", "class", "package", "signature"])]
 
     def filter_invalid_entries_4sink(self, api_list):
-        return [api for api in api_list if self.not_none(api, ["method", "package", "signature"])]
+        return [api for api in api_list if self.not_none(api, ["method", "signature"]) and (len(api["method"].strip()) >= 4 or len(api["signature"].strip()) >= 5 )]
 
     def build_source_qll_with_enumeration(self):
         # 过滤属性为空的key
-        source_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_apis_path)))
+        ql_method_call_source_body_entry_tmp = QL_METHOD_CALL_SOURCE_BODY_ENTRY if self.language == "java" else QL_METHOD_CALL_SOURCE_BODY_ENTRY_PYTHON
+        source_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_source_apis_path)))
+        source_apis_flags = ["get", "invoke"] if self.language == "java" else ["get"]
         source_api_entries = [
-            QL_METHOD_CALL_SOURCE_BODY_ENTRY.format(
+            ql_method_call_source_body_entry_tmp.format(
                 method=api["method"],
-                package=api["package"],
+                package= "Attribute" if "." in api["package"] else api["package"],
                 clazz=api["class"],
-            ) for api in source_apis
+            ) for api in source_apis if api["method"].strip() in source_apis_flags and len(api["sink_args"]) >0 and
+                    len(api["package"]) > 5 and "." in api["package"]
         ]
-        
         ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON
         ql_func_param_name_entry_tmp = QL_FUNC_PARAM_NAME_ENTRY if self.language == "java" else QL_FUNC_PARAM_NAME_ENTRY_PYTHON
         source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
+        # if "addcrypted" in str(source_params): print(source_params)
         source_params_entries = [
-            ql_func_param_source_entry_tmp.format(
-                method=param_func["method"],
-                package=param_func["package"],
-                clazz=param_func["class"],
-                params=" or ".join([
-                    ql_func_param_name_entry_tmp.format(
-                        arg_name=arg_name
-                    ) for arg_name in param_func["tainted_input"]
-                ]),
-            )
-            if isinstance(param_func, dict) and len(param_func.get("tainted_input", [])) > 0
-            else "1 = 0"
-            for param_func in source_params
+                ql_func_param_source_entry_tmp.format(
+                    method=param_func["method"],
+                    package=next(
+                        (param_func["package"].replace(prefix, "") 
+                        for prefix in PYTHON_PROJ_NAME_PREFIX 
+                        if param_func["package"].startswith(prefix)),
+                        param_func["package"]  # 如果没有匹配的前缀，保持原样
+                    ),
+                    clazz=param_func["class"],
+                    params=" or ".join([
+                        ql_func_param_name_entry_tmp.format(
+                            arg_name=arg_name
+                        ) for arg_name in param_func["tainted_input"]
+                    ]),
+                )
+                if isinstance(param_func, dict) and len(param_func.get("tainted_input", [])) > 0
+                else "1 = 0"
+                for param_func in source_params if 
+                    ( 
+                     param_func["method"].strip() in self.source_flags
+                    )  or "java_4" in self.project_name
         ]
-        
         # TODO: 不考虑external apis会作为source的情况
-        # all_entries = source_api_entries + source_params_entries
-        all_entries = source_params_entries
+        all_entries = source_api_entries + source_params_entries
+        # all_entries = source_params_entries
         if len(all_entries) == 0:
             all_entries = ["1 = 0"]
 
+        all_entries = list(set(all_entries))  # Deduplicate entries
         batch_size = 300
         if len(all_entries) > batch_size:
             num_batches = int(math.ceil(len(all_entries) / batch_size))
@@ -1096,18 +1121,48 @@ dependencies:
         
         #FIXME: Merge function parameter based taint propagators
         summary_apis = summary_apis + summary_funcs
-        
+        seen_apis = []
+        dedup_summary_apis = []
+        kwargs_apis = []
+ 
+        for a in summary_apis:
+            if a["method"] not in self.taint_propagator_flags and "java_4" not in self.project_name:continue
+            
+            identifier = (a["package"], a["class"], a["method"])
+            if identifier not in seen_apis:
+                seen_apis.append(identifier)
+                if "kwargs" in str(a.get("tainted_input", [])):
+                    kwargs_apis.append(a)
+                    continue
+                dedup_summary_apis.append(a)
+        summary_apis = dedup_summary_apis
+        # summary_apis = list(set(summary_apis))  # Deduplicate entries
         ql_summart_body_entry_tmp = QL_SUMMARY_BODY_ENTRY if self.language == "java" else QL_SUMMARY_BODY_ENTRY_PYTHON
         if len(summary_apis) == 0 or self.no_summary_model:
             body = "1 = 0"
         else:
-            body = QL_BODY_OR_SEPARATOR.join([
-                ql_summart_body_entry_tmp.format(
-                    package=api["package"],
+            body_parts = [
+                    ql_summart_body_entry_tmp.format(
+                    package=next(
+                        (api["package"].replace(prefix, "") 
+                        for prefix in PYTHON_PROJ_NAME_PREFIX 
+                        if api["package"].startswith(prefix)),
+                        api["package"]  # 如果没有匹配的前缀，保持原样
+                    ),
                     clazz=api["class"],
                     method=api["method"],
-                ) for api in summary_apis
-            ])
+                ) for api in summary_apis if "kwargs" not in api.get("tainted_input", [])
+            ]
+            if len(kwargs_apis) > 0 and self.language == "python":
+                for kw_api in kwargs_apis:
+                    body_parts.append(
+                        QL_SUMMARY_BODY_ENTRY_PYTHON_KWARG.format(
+                            method=kw_api["method"],
+                        )
+                    )
+            body_parts = list(set(body_parts))  # Deduplicate entries
+            body_parts += [QL_SUMMARY_BODY_ENTRY_MANUAL_PYTHON] if self.language == "python" else []
+            body = QL_BODY_OR_SEPARATOR.join(body_parts)
         ql_step_predicate_tmp = QL_STEP_PREDICATE if self.language == "java" else QL_STEP_PREDICATE_PYTHON
         my_summary_content = ql_step_predicate_tmp.format(body=body)
         return my_summary_content
@@ -1124,12 +1179,17 @@ dependencies:
             additional = ""
         else:
             def sink_body_entry(api):
+                    
                 if "sink_args" in api and \
-                    any(
+                    ( any(
                         # len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
                         len(sink_arg) > 0 or str(sink_arg) == "this"
                         for sink_arg in api["sink_args"]
-                    ):
+                    ) and self.language == "python") or \
+                    ( any(
+                        len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
+                        for sink_arg in api["sink_args"]
+                    ) and self.language == "java"):
                     ql_sink_body_entry_tmp = QL_SINK_BODY_ENTRY if self.language == "java" else (
                         QL_SINK_BODY_ENTRY_PYTHON_KIND1
                         if "." in api["signature"].split("(")[0].split()[-1] else
@@ -1164,22 +1224,35 @@ dependencies:
                     return "1 = 0"
 
             def sink_body(apis):
-                return QL_BODY_OR_SEPARATOR.join([sink_body_entry(api) for api in sink_apis])
+                apis_parts = [sink_body_entry(api) for api in apis]
+                apis_parts = list(set(apis_parts))  # Deduplicate entries
+                return QL_BODY_OR_SEPARATOR.join(apis_parts)
 
             batch_size = 300
+            seen_sink_apis = []
+            dedup_sink_apis = []
+            for a in sink_apis:
+                identifier = (a["method"], a.get("package", ""), a.get("class", ""), a.get("signature", ""))
+                if identifier not in seen_sink_apis:
+                    seen_sink_apis.append(identifier)
+                    dedup_sink_apis.append(a)
+                    
+            sink_apis = dedup_sink_apis  # Deduplicate entries
             if len(sink_apis) > batch_size:
                 num_batches = int(math.ceil(len(sink_apis) / batch_size))
                 body = " or\n".join([
                     CALL_QL_SUBSET_PREDICATE.format(part_id=i, kind="Sink", node="snk")
                     for i in range(num_batches)])
-                additional = "\n\n".join([
+                additional_parts = [
                     QL_SUBSET_PREDICATE.format(
                         part_id=i,
                         kind="Sink",
                         node="snk",
                         body=sink_body(sink_apis[i * batch_size : (i + 1) * batch_size]))
                     for i in range(num_batches)
-                ])
+                ]
+                additional_parts = list(set(additional_parts))  # Deduplicate additional parts
+                additional = "\n\n".join(additional_parts)
             else:
                 body = sink_body(sink_apis)
                 additional = ""
@@ -1294,13 +1367,18 @@ dependencies:
         codeql_query_dir = f"{self.custom_codeql_root}/{query_tmp}" if not self.general else f"{self.custom_codeql_root}/general"
         os.makedirs(codeql_query_dir, exist_ok=True)
         
-        query_list =  QUERIES[query_tmp]["queries"] if self.language == "java" else \
+        query_list =  QUERIES[query_tmp]["queries"][2:] if self.language == "java" else \
             QUERIES[query_tmp]["queries"][:2] if self.language == "python" else QUERIES[query_tmp]["queries"][2:] 
         for q in query_list:  # Only copy the first two files (ql and qll)
             query_dest_path = f"{codeql_query_dir}/{q.split('/')[-1]}"
             if not os.path.exists(query_dest_path):
                 shutil.copy(f"{THIS_SCRIPT_DIR}/{q}", query_dest_path)
             self.project_logger.info(f"  ==> Query {q.split('/')[-1]} ready... Done!")
+        
+        if not os.path.exists(self.pack_lock_yml):
+            codeql_pack_install_cmd = ["codeql", "pack", "install", self.custom_codeql_root]
+            sp.run(codeql_pack_install_cmd)
+        
         # Step 2: Run codeql analyze and produce sarif and csv
         self.project_logger.info("  ==> Running CodeQL analysis...")
         query_filename = query_list[0].split("/")[-1]
@@ -1322,19 +1400,18 @@ dependencies:
             self.project_codeql_db_path, "--format=sarif-latest", 
             f"--output={self.query_output_result_sarif_path}", to_run_query_full_path
         ]
-
-        print(666, sarif_cmd)
-        exit(1)
+        print(sarif_cmd)
         sp.run(sarif_cmd)
         if not os.path.exists(self.query_output_result_sarif_path):
             self.project_logger.error("  ==> Result SARIF not produced; aborting"); return
 
         # Run CSV analysis  
-        csv_cmd = [CODEQL, "database", "analyze", "--rerun"] + search_path_args + [
+        csv_cmd = ["codeql", "database", "analyze", "--rerun"] + search_path_args + [
             self.project_codeql_db_path, "--format=csv", 
             f"--output={self.query_output_result_csv_path}", to_run_query_full_path
         ]
         sp.run(csv_cmd)
+
         if not os.path.exists(self.query_output_result_csv_path):
             self.project_logger.error("  ==> Result CSV not produced; aborting"); return
 
@@ -1552,11 +1629,9 @@ dependencies:
             self.evaluate_result()
             self.debug_result()
             exit(1)
-
+            
         # 1. Collect all the invoked external APIs
         self.collect_invoked_external_apis()
-
-
 
         # 2. Collect all the internal function parameters
         self.collect_internal_function_parameters()

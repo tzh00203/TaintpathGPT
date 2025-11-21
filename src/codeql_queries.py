@@ -15,7 +15,7 @@ import python
 import semmle.python.dataflow.new.DataFlow
 import semmle.python.dataflow.new.TaintTracking
 
-predicate isGPTDetectedSource(DataFlow::Node source) {{
+predicate isGPTDetectedSource(DataFlow::Node src) {{
 {body}
 }}
 
@@ -83,6 +83,18 @@ QL_METHOD_CALL_SOURCE_BODY_ENTRY = """\
 """
 
 
+QL_METHOD_CALL_SOURCE_BODY_ENTRY_PYTHON = """\
+    exists(Call c, Attribute attr |
+        attr = c.getFunc() and
+        (
+            attr.getObject().toString() = "{package}" or
+            attr.getObject().toString() = "{clazz}"
+        )
+        and
+        attr.getAttr() = "{method}" and
+        src.asExpr() = c
+  )\
+"""
 
 QL_FUNC_PARAM_SOURCE_ENTRY = """\
     exists(Parameter p |
@@ -99,9 +111,11 @@ QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON = """\
       ({params}) and
       (
         func.getScope().toString() = "Module {package}" or func.getScope().toString() = "Class {clazz}" or
-        func.getScope().toString() = "Moudle {package}.{clazz}"
+        func.getScope().toString() = "Moudle {package}.{clazz}" or
+        func.getEnclosingModule().toString() = "Module {package}.{clazz}" or
+        "{package}.{clazz}".matches("%"+func.getEnclosingModule().getName())
       ) and
-      (source.asExpr() = func.getAnArg() )
+      (src.asExpr() = func.getAnArg() )
   )\
 """
 
@@ -144,12 +158,13 @@ QL_SUMMARY_BODY_ENTRY_PYTHON = """\
      c.getFunc().toString() = "{method}" and
      c.getAnArg() = pre.asExpr() and 
      c = next.asExpr()
-   )
-   or
+   )\
+"""
+
+QL_SUMMARY_BODY_ENTRY_PYTHON_KWARG = """
     exists(Call call, Attribute attr, Function f |
         call.getFunc() = attr and
         attr.getAttr() = "{method}" and
-        ( attr.getObject().toString() = "{clazz}" or attr.getObject().toString() = "{package}" )and
         call.getKwargs() = pre.asExpr() and
         f.getName() = "{method}" and
         f.getKwarg() = next.asExpr()

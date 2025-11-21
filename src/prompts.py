@@ -89,7 +89,7 @@ Package,Class,Method,Doc
 
 POSTHOC_FILTER_SYSTEM_PROMPT = """\
 You are an expert in detecting security vulnerabilities. \
-You are given the starting point (source) and the ending point (sink) of a dataflow path in a Java project that may be a potential vulnerability. \
+You are given the starting point (source) and the ending point (sink) of a dataflow path in a Java / Python project that may be a potential vulnerability. \
 Analyze the given taint source and sink and predict whether the given dataflow can be part of a vulnerability or not, and store it as a boolean in "is_vulnerable". \
 Note that, the source must be either a) the formal parameter of a public library function which might be invoked by a downstream package, or b) the result of a function call that returns tainted input from end-user. \
 If the given source or sink do not satisfy the above criteria, mark the result as NOT VULNERABLE. \
@@ -107,8 +107,14 @@ Do not include anything else in the response.\
 """
 
 POSTHOC_FILTER_USER_PROMPT = """\
-Analyze the following dataflow path in a Java project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}), or a relevant vulnerability.
+Analyze the following dataflow path in a Java / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}), or a relevant vulnerability.
 {hint}
+
+The vulnerability patch for the project to be analyzed is shown below. Only data paths related to this patch are considered is_vulnerable
+---patch_start---
+{vulnerability_patch}
+---patch_end---
+
 
 Source ({source_msg}):
 ```
