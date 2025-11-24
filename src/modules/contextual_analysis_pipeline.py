@@ -240,7 +240,11 @@ class ContextualAnalysisPipeline:
 
     def intermediate_step_prompt(self, i, loc, enclosing_func_locs):
         file_name = loc["file_url"].split("/")[-1]
-
+        longer_file_name = loc["file_url"].split("/")[-2] + "/" + loc["file_url"].split("/")[-1]
+        
+        if len(loc["file_url"].split("/")) >= 3:
+            longer_file_name = loc["file_url"].split("/")[-3] + "/" + longer_file_name
+        
         file_dir = f"{self.project_source_code_dir}/{loc['file_url']}"
         if not os.path.exists(file_dir): return None
         file_lines = list(open(file_dir, 'r').readlines())
@@ -272,6 +276,7 @@ class ContextualAnalysisPipeline:
         intermediate_steps = self.intermediate_steps_prompt(path_locs, enclosing_func_locs)
         end_snippet, end_raw_snippets = self.get_snippet_from_loc(end_loc, "sink", enclosing_class_locs, enclosing_func_locs)
         start_code_snippet, func_decl_str, class_decl_str = start_raw_snippets
+        # print(7777, self.vulnerability_patch)
         prompt = POSTHOC_FILTER_USER_PROMPT.format(
             cwe_description=QUERIES[self.query]['desc'],
             cwe_id=f"CWE-{QUERIES[self.query]['cwe_id']}",

@@ -107,10 +107,15 @@ Do not include anything else in the response.\
 """
 
 POSTHOC_FILTER_USER_PROMPT = """\
-Analyze the following dataflow path in a Java / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}), or a relevant vulnerability.
+Analyze the following dataflow path in a Java / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}).
 {hint}
 
-The vulnerability patch for the project to be analyzed is shown below. Only data paths related to this patch are considered is_vulnerable
+The vulnerability patch for the project to be analyzed is shown below. 
+[important] 
+!!!Only data paths (sinks) shown in this patch are considered is_vulnerable!!!
+!!! You can determine whether the correct path has been found by checking if there is an intersection between the file paths mentioned in the 'patch' and the file paths provided by the step.!!!
+If the 'sink' shown in the path is not present in this patch, 
+!!!then it is not a vulnerability!!!.
 ---patch_start---
 {vulnerability_patch}
 ---patch_end---

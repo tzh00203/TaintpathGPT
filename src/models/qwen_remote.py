@@ -49,7 +49,7 @@ class QwenAPIRemote:
             "Authorization": f"Bearer {self.api_key}"
         }
         payload = {
-            # "model": "Qwen3-30B-A3B-Instruct",
+            "model": "gpt-5",
             "messages":prompt,
             "temperature": temperature,
             "top_p": top_p,

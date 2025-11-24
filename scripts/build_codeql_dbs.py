@@ -55,17 +55,34 @@ def create_codeql_database(project_slug, language, db_base_path, sources_base_pa
     Create a CodeQL database for a project, either Java or Python.
     """
     database_path = os.path.abspath(os.path.join(db_base_path, project_slug))
+    database_path_old = os.path.abspath(os.path.join(db_base_path, project_slug+"_old"))
     source_path = os.path.abspath(os.path.join(sources_base_path, project_slug))
     Path(database_path).parent.mkdir(parents=True, exist_ok=True)
 
-    command = [
+    command_new = [
         "codeql", "database", "create",
         database_path,
         "--source-root", source_path,
         "--language", language,
         "--overwrite"
     ]
+    command_old = [
+        "./codeql/codeql", "database", "create",
+        database_path_old,
+        "--source-root", source_path,
+        "--language", language,
+        "--overwrite"
+    ]
+    
+    if language == "java":
+        compile_cmd = "--build-mode=none"
+        command_new.append(
+            compile_cmd
+        )
+        command_old.append(compile_cmd)
+        
 
+    print(command_new)
     print(f"\nCreating CodeQL database for project: {project_slug} ({language})")
     print(f"Database path: {database_path}")
     print(f"Source path: {source_path}")
@@ -75,7 +92,8 @@ def create_codeql_database(project_slug, language, db_base_path, sources_base_pa
             print(f"JAVA_HOME: {env.get('JAVA_HOME')}")
 
     try:
-        subprocess.run(command, env=env, check=True)
+        subprocess.run(command_new, env=env, check=True)
+        subprocess.run(command_old, env=env, check=True)
         print(f"✅ Successfully created CodeQL database for {project_slug}")
     except subprocess.CalledProcessError as e:
         print(f"❌ Failed to create CodeQL database for {project_slug}: {e}")
@@ -90,20 +108,26 @@ def main():
     args = parser.parse_args()
 
     projects = load_build_info()
-
-    if args.project:
-        project = next((p for p in projects if p['project_slug'] == args.project), None)
-        if project:
-            language = args.language
-            env = setup_environment(project) if language == "java" else None
-            create_codeql_database(project['project_slug'], language, args.db_path, args.sources_path, env)
-        else:
-            print(f"Project {args.project} not found in build info")
-    else:
-        for project in projects:
-            language = args.language
-            env = setup_environment(project) if language == "java" else None
-            create_codeql_database(project['project_slug'], language, args.db_path, args.sources_path, env)
+    project = args.project
+    language = args.language
+    # env = setup_environment(project) if language == "java" else None
+    create_codeql_database(project, language, args.db_path, args.sources_path)
+    # if args.project:
+    #     project = next((p for p in projects if p['project_slug'] == args.project), None)
+    #     if project:
+    #         language = args.language
+    #         env = setup_environment(project) if language == "java" else None
+    #         create_codeql_database(project['project_slug'], language, args.db_path, args.sources_path, env)
+    #     else:
+    #         project = args.project
+    #         language = args.language
+    #         env = setup_environment(project) if language == "java" else None
+    #         create_codeql_database(project, language, args.db_path, args.sources_path, env)        
+    # else:
+    #     for project in projects:
+    #         language = args.language
+    #         env = setup_environment(project) if language == "java" else None
+    #         create_codeql_database(project['project_slug'], language, args.db_path, args.sources_path, env)
 
 LOCAL_BUILD_INFO = os.path.join(DATA_DIR, "build-info", "build_info_local.csv")
 

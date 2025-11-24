@@ -1,3 +1,9 @@
+## run_simple
+python3 src/iris_input.py CVE-xxxx-xxxx
+python scripts/build_codeql_dbs.py --project match_{lang}_0_CVE-xxxx-xxxx_1.0.0 --language {lang}
+python3 scripts/get_packages_codeql.py final_{lang}_0_CVE-xxxx-xxxx_1.0.0
+python src/iris.py --query cwe-022wLLM --run-id test --llm remote_qwen final_{lang}_0_CVE-xxxx-xxxx_1.0.0  --language {lang} --general 
+
 
 ## 🚀 Set Up
 ### Using Docker (Recommended)

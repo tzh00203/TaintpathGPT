@@ -11,12 +11,12 @@ from src.config import PROJECT_SOURCE_CODE_DIR
 def run_codeql_query(db_path, query_path):
     try:
         subprocess.run(
-            ["./codeql/codeql", "query", "run", "--database", str(db_path), 
+            ["codeql", "query", "run", "--database", str(db_path), 
              "--output=results.bqrs", str(query_path)],
             check=True, capture_output=True, text=True
         )
         result = subprocess.run(
-            ["./codeql/codeql", "bqrs", "decode", "--format=csv", "results.bqrs"],
+            ["codeql", "bqrs", "decode", "--format=csv", "results.bqrs"],
             capture_output=True, text=True, check=True
         )
         packages = set()
@@ -107,7 +107,8 @@ def main():
     group_ids = find_maven_group_ids(project_path)
     if not group_ids:
         print("Error: No Maven groupIds or artifactIds found.")
-        sys.exit(1)
+        pass
+        # sys.exit(1)
     
     print(f"Detected Maven groupIds/artifactIds: {group_ids}")
     

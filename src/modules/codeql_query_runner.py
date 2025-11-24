@@ -70,9 +70,11 @@ class CodeQLQueryRunner:
         # 5. Run the query and generate result bqrs
         if self.language == "java" or (self.language == "python" and main_query.endswith(".ql")):
             # 原有的CodeQL查询执行方式
-            codeql_tmp = CODEQL if self.language == "java" else f"codeql"
-            print([codeql_tmp, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
-            sp.run([codeql_tmp, "query", "run", f"--database={self.project_codeql_db_path}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
+            codeql_tmp = "./codeql/codeql" if (self.language == "java" and query.startswith("fetch1")) else f"codeql"
+            prj_db_tmp = self.project_codeql_db_path
+            prj_db_tmp += "_old" if (self.language == "java" and query.startswith("fetch1")) else ""
+            print([codeql_tmp, "query", "run", f"--database={prj_db_tmp}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
+            sp.run([codeql_tmp, "query", "run", f"--database={prj_db_tmp}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
         else:  # python
             # Python脚本执行方式
             project_source_path = self.project_source_path  # 需要确保这个属性存在，指向项目源代码目录
@@ -96,7 +98,7 @@ class CodeQLQueryRunner:
 
         # 6. Decode the query (仅适用于Java/CodeQL)
         if (self.language == "java") or (self.language == "python" and main_query.endswith(".ql")):
-            codeql_tmp = CODEQL if self.language == "java" else f"codeql"
+            codeql_tmp = "./codeql/codeql" if (self.language == "java" and query.startswith("fetch1")) else f"codeql"
             sp.run([codeql_tmp, "bqrs", "decode", query_result_bqrs_path, "--format=csv", f"--output={query_result_csv_path}"])
             if not os.path.exists(query_result_csv_path):
                 self.project_logger.error(f"  ==> Failed to decode result bqrs from `{query}`; aborting")

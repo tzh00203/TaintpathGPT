@@ -62,7 +62,8 @@ PYTHON_PROJ_NAME_PREFIX = [
     "langroid-0.53.14.", 
     "horilla-1.3.", 
     "BentoML-1.4.10.", 
-    "pyload-f34052df70a193948c1a19332a1f02c7b9bc362d."
+    "pyload-f34052df70a193948c1a19332a1f02c7b9bc362d.",
+    "security_monkey-0.7.0"
     ]
 
 MAX_DOC_LENGTH = 50
@@ -105,7 +106,8 @@ class SAPipeline:
             language: str = "java",
             no_logger: bool = False,
             diff_path: str = "",
-            general: bool = False
+            general: bool = False,
+            manual_rules: bool = False
 
     ):
         # Store basic information
@@ -147,6 +149,7 @@ class SAPipeline:
         self.general = general
         self.taint_propagator_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_taint_propagator_{self.language}.txt", "r").read().split("\n")
         self.source_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_source_{self.language}.txt", "r").read().split("\n") 
+        self.manual_rules = manual_rules
         # Setup logger
         if not self.no_logger:
             self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
@@ -170,11 +173,12 @@ class SAPipeline:
 
         # Load some basic information, such as commits and fixes related to the CVE
         self.project_source_code_dir = f"{PROJECT_SOURCE_CODE_DIR}/{self.project_name}"
-        self.vulnerability_patch_path = self.project_source_code_dir + "/" + "diff.txt"
+        self.vulnerability_patch_path = str(self.project_source_code_dir) + "/" + "diff.txt"
         self.vulnerability_patch = open(self.vulnerability_patch_path, "r").read() if os.path.exists(self.vulnerability_patch_path) else ""
+        
         self.diff_path = str(self.project_source_code_dir)+ "/" + "diff.txt"
-        self.diff_content = open(self.diff_path, "r").read() if os.path.exists(self.diff_path) else ""
 
+        self.diff_content = open(self.diff_path, "r").read() if os.path.exists(self.diff_path) else ""
         if self.cve_id is not None and self.cve_id.startswith("CVE-"):
             self.all_cves_with_commit = pd.read_csv(CVES_MAPPED_W_COMMITS_DIR)
             # print(self.all_cves_with_commit)
@@ -675,7 +679,12 @@ dependencies:
             for i, response in zip(args, responses):
                 with open(f"{self.label_api_log_path}/raw_llm_response_{i}.txt", "w") as f:
                     f.write(str(response) + "\n")
-                json_result = json.loads(response)
+                json_result = []
+                try:
+                    json_result = json.loads(response)
+                except Exception as e:
+                    print("parsing json error", e)
+                    json_result = []
                 indiv_results.append(json_result)
 
             # 6. Merge all the results
@@ -684,7 +693,7 @@ dependencies:
                 merged_llm_results.extend(indiv_result)
                 
             # FIXME: 过滤属性为空的条目
-            merged_llm_results=self.filter_invalid_entries(merged_llm_results)
+            merged_llm_results=self.filter_invalid_entries(self.filter_invalid_entries_4sink(merged_llm_results))
             # 7. Save the result for this project
             merged_overall_results = self.merge_llm_labeled_apis_and_cache(candidates, merged_llm_results)
             sources = [r for r in merged_overall_results if r.get("type", "") == "source"]
@@ -950,9 +959,14 @@ dependencies:
             for i, response in zip(args, responses):
                 # FIXME: parse_json函数存在问题，暂时用json.loads替代
                 # json_result = self.parse_json(response)
-                json_result = json.loads(response)
                 with open(f"{self.label_func_params_log_path}/raw_llm_response_{i}.txt", "w") as f:
                         f.write(response + "\n")
+                json_result = []
+                try:
+                    json_result = json.loads(response)
+                except Exception as e:
+                    print("parsing json error", e)
+                    json_result = []
                 indiv_results.append(json_result)
 
             # 6. Merge all the results
@@ -1030,7 +1044,7 @@ dependencies:
         return [api for api in api_list if self.not_none(api, ["method", "class", "package", "signature"])]
 
     def filter_invalid_entries_4sink(self, api_list):
-        return [api for api in api_list if self.not_none(api, ["method", "signature"]) and (len(api["method"].strip()) >= 4 or len(api["signature"].strip()) >= 5 )]
+        return [api for api in api_list if self.not_none(api, ["method", "signature"]) and (len(api["method"].strip()) >= 3 or len(api["signature"].strip()) >= 5 )]
 
     def build_source_qll_with_enumeration(self):
         # 过滤属性为空的key
@@ -1043,7 +1057,7 @@ dependencies:
                 package= "Attribute" if "." in api["package"] else api["package"],
                 clazz=api["class"],
             ) for api in source_apis if api["method"].strip() in source_apis_flags and len(api["sink_args"]) >0 and
-                    len(api["package"]) > 5 and "." in api["package"]
+                    len(api["package"]) >= 4
         ]
         ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON
         ql_func_param_name_entry_tmp = QL_FUNC_PARAM_NAME_ENTRY if self.language == "java" else QL_FUNC_PARAM_NAME_ENTRY_PYTHON
@@ -1070,7 +1084,7 @@ dependencies:
                 for param_func in source_params if 
                     ( 
                      param_func["method"].strip() in self.source_flags
-                    )  or "java_4" in self.project_name
+                    )  or "java_4" in self.project_name or self.manual_rules is False
         ]
         # TODO: 不考虑external apis会作为source的情况
         all_entries = source_api_entries + source_params_entries
@@ -1126,7 +1140,7 @@ dependencies:
         kwargs_apis = []
  
         for a in summary_apis:
-            if a["method"] not in self.taint_propagator_flags and "java_4" not in self.project_name:continue
+            if a["method"] not in self.taint_propagator_flags and "java_4" not in self.project_name and self.manual_rules:continue
             
             identifier = (a["package"], a["class"], a["method"])
             if identifier not in seen_apis:
@@ -1560,6 +1574,7 @@ dependencies:
             self.test_run,
             posthoc_filtering_skip_fp=self.posthoc_filtering_skip_fp,
             rerun_skipped_fp=self.posthoc_filtering_rerun_skipped_fp,
+            vulnerability_patch=self.vulnerability_patch
         )
         contextual_analysis_pipeline.run()
 
@@ -1703,6 +1718,7 @@ if __name__ == '__main__':
     parser.add_argument("--language", type=str, default="java")
     parser.add_argument("--diff-path", type=str, default="")
     parser.add_argument("--general", action="store_true")
+    parser.add_argument("--manual_rules", action="store_true")
     args = parser.parse_args()
 
     # Set basic properties
@@ -1743,7 +1759,8 @@ if __name__ == '__main__':
         test_run=args.test_run,
         language=args.language,
         diff_path=args.diff_path,
-        general=args.general
+        general=args.general,
+        manual_rules=args.manual_rules
     )
 
     pipeline.run()
