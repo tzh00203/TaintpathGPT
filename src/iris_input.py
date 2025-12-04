@@ -4,14 +4,18 @@ import zipfile
 import sys
 import csv
 
-BASE_INPUT_DIR = "/home/ubuntu/TaintpathGPT/data/project-sources"  # c/, java/, python/ 所在目录
-BASE_OUTPUT_DIR = "/home/ubuntu/TaintpathGPT/data/project-sources"
-PROJECT_INFO_CSV = "/home/ubuntu/TaintpathGPT/data/project_info.csv"
+# 获取当前脚本所在的根路径
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 构造相对路径
+BASE_INPUT_DIR = os.path.join(ROOT_DIR, "../data", "project-sources")  # c/, java/, python/ 所在目录
+BASE_OUTPUT_DIR = os.path.join(ROOT_DIR, "../data", "project-sources")
+PROJECT_INFO_CSV = os.path.join(ROOT_DIR, "../data", "project_info.csv")
 HASH_LIST = "030e9d00125cbd1ad759668f85488aba1019c668;a221a864db28eb736d36041df2fa6eb8839fc5cd;ce9e11517eca69e58ed4378d1e47a02bd06863cc"
 
 
 
-def append_project_info_csv(index, lang, cve, folder_name):
+def append_project_info_csv(index, lang, cve, folder_name, vendor=""):
     """向 project_info.csv 追加一行"""
     row = [
         str(index),
@@ -64,7 +68,7 @@ def get_next_index():
         return last_idx + 1
     
     
-def detect_language(cve):
+def detect_language(cve, vendor):
     """根据目录判断 CVE 属于哪个语言"""
     for lang in ["c", "java", "python"]:
         if os.path.isdir(os.path.join(BASE_INPUT_DIR, lang, cve)):
@@ -96,53 +100,59 @@ def merge_patch_files(patch_dir, output_file):
     print(f"📝 已写入 patch 内容到: {output_file}")
 
 
-def process_cve(cve):
-    lang = detect_language(cve)
+def process_cve(cve, vendor):
+    # lang = detect_language(cve, vendor)
+    lang = "c"
     print(f"🔍 CVE = {cve}, 语言 = {lang}")
 
     src_base = os.path.join(BASE_INPUT_DIR, lang, cve)
     src_dir = os.path.join(src_base, "src")
     patch_dir = os.path.join(src_base, "patch")
-    folder_name = f"final_{lang}_0_{cve}_1.0.0"
-    output_dirname = f"final_{lang}_0_{cve}_1.0.0"
+    folder_name = f"paper_{lang}_3_{cve}_{vendor}"
+    output_dirname = f"paper_{lang}_3_{cve}_1.0.0"
     output_dir = os.path.join(BASE_OUTPUT_DIR, output_dirname)
 
     print(f"📁 目标目录: {output_dir}")
-    os.makedirs(output_dir, exist_ok=True)
+    # os.makedirs(output_dir, exist_ok=True)
 
-    # 处理 src
-    if not os.path.isdir(src_dir):
-        raise Exception(f"❌ src 目录不存在: {src_dir}")
+    # # 处理 src
+    # if not os.path.isdir(src_dir):
+    #     raise Exception(f"❌ src 目录不存在: {src_dir}")
 
-    src_items = os.listdir(src_dir)
-    if not src_items:
-        raise Exception("❌ src 目录为空")
+    # src_items = os.listdir(src_dir)
+    # if not src_items:
+    #     raise Exception("❌ src 目录为空")
 
-    first_item = os.path.join(src_dir, src_items[0])
+    # first_item = os.path.join(src_dir, src_items[0])
 
-    copy_or_extract_src(first_item, output_dir)
+    # copy_or_extract_src(first_item, output_dir)
 
-    # 处理 patch
-    if os.path.isdir(patch_dir):
-        diff_file = os.path.join(output_dir, "diff.txt")
-        merge_patch_files(patch_dir, diff_file)
-    else:
-        print("⚠️ 无 patch 目录，跳过")
+    # # 处理 patch
+    # if os.path.isdir(patch_dir):
+    #     diff_file = os.path.join(output_dir, "diff.txt")
+    #     merge_patch_files(patch_dir, diff_file)
+    # else:
+    #     print("⚠️ 无 patch 目录，跳过")
 
-    print("✅ 完成!")
+    # print("✅ 完成!")
     
     # ---- 写 CSV ----
     next_index = get_next_index()
-    append_project_info_csv(next_index, lang, cve, folder_name)
+    append_project_info_csv(next_index, lang, cve, folder_name, vendor)
 
     print("✅ 完成！")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("用法: python3 script.py CVE-XXXX-XXXX")
         sys.exit(1)
 
     cve_id = sys.argv[1].strip()
-    process_cve(cve_id)
+    vendor = ""
+    print(sys.argv)
+    if len(sys.argv) == 4:
+        vendor = sys.argv[3].strip()
+        print(vendor)
+    process_cve(cve_id, vendor)
 
