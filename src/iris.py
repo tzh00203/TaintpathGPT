@@ -107,7 +107,8 @@ class SAPipeline:
             no_logger: bool = False,
             diff_path: str = "",
             general: bool = False,
-            manual_rules: bool = False
+            manual_rules: bool = False,
+            skip_source_post_cache: bool = False,
 
     ):
         # Store basic information
@@ -147,9 +148,17 @@ class SAPipeline:
 
         self.language = language
         self.general = general
-        self.taint_propagator_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_taint_propagator_{self.language}.txt", "r").read().split("\n")
-        self.source_flags = open(THIS_SCRIPT_DIR + "/../data/"+ f"manual_source_{self.language}.txt", "r").read().split("\n") 
+        self.taint_propagator_flags = open(THIS_SCRIPT_DIR + "/../data/"+ 
+            f"manual_taint_propagator_{self.language}.txt", "r").read().split("\n") if (
+                os.path.exists(THIS_SCRIPT_DIR + "/../data/"+ f"manual_taint_propagator_{self.language}.txt")   
+            ) else []
+                                    
+        self.source_flags = open(THIS_SCRIPT_DIR + "/../data/"+ 
+            f"manual_source_{self.language}.txt", "r").read().split("\n") if (
+                os.path.exists(THIS_SCRIPT_DIR + "/../data/"+ f"manual_source_{self.language}.txt")
+            ) else []
         self.manual_rules = manual_rules
+        self.skip_source_post_cache = skip_source_post_cache
         # Setup logger
         if not self.no_logger:
             self.master_logger = Logger(f"{IRIS_ROOT_DIR}/log")
@@ -335,12 +344,16 @@ dependencies:
 
     def keep_external_packages(self, api_candidates_df):
         # print(666, api_candidates_df)
+        if self.language.startswith("c"):
+            return api_candidates_df
         packages = open(f"{PACKAGE_MODULES_PATH}/{self.project_name}.txt").readlines()
         packages = [p.strip() for p in packages]
         # print(777, packages)
         return api_candidates_df[~api_candidates_df["package"].isin(packages)]
 
     def keep_internal_packages(self, api_candidates_df):
+        if self.language.startswith("c"):
+            return api_candidates_df
         packages = open(f"{PACKAGE_MODULES_PATH}/{self.project_name}.txt").readlines()
         packages = [p.strip() for p in packages]
         return api_candidates_df[api_candidates_df["package"].isin(packages)]
@@ -693,7 +706,10 @@ dependencies:
                 merged_llm_results.extend(indiv_result)
                 
             # FIXME: 过滤属性为空的条目
-            merged_llm_results=self.filter_invalid_entries(self.filter_invalid_entries_4sink(merged_llm_results))
+            if self.language.startswith("c"):
+                merged_llm_results=self.filter_invalid_entries_4cpp(merged_llm_results)
+            else:
+                merged_llm_results=self.filter_invalid_entries(self.filter_invalid_entries_4sink(merged_llm_results))
             # 7. Save the result for this project
             merged_overall_results = self.merge_llm_labeled_apis_and_cache(candidates, merged_llm_results)
             sources = [r for r in merged_overall_results if r.get("type", "") == "source"]
@@ -1040,6 +1056,9 @@ dependencies:
     def not_none(self, d, keys):
         return isinstance(d, dict) and all([d.get(k, None) for k in keys])
 
+    def filter_invalid_entries_4cpp(self, api_list):
+        return [api for api in api_list if self.not_none(api, ["method", "signature"])]
+
     def filter_invalid_entries(self, api_list):
         return [api for api in api_list if self.not_none(api, ["method", "class", "package", "signature"])]
 
@@ -1048,20 +1067,33 @@ dependencies:
 
     def build_source_qll_with_enumeration(self):
         # 过滤属性为空的key
-        ql_method_call_source_body_entry_tmp = QL_METHOD_CALL_SOURCE_BODY_ENTRY if self.language == "java" else QL_METHOD_CALL_SOURCE_BODY_ENTRY_PYTHON
-        source_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_source_apis_path)))
+        ql_method_call_source_body_entry_tmp = QL_METHOD_CALL_SOURCE_BODY_ENTRY if self.language == "java" \
+            else ( QL_METHOD_CALL_SOURCE_BODY_ENTRY_PYTHON if self.language == "python"
+                  else QL_METHOD_CALL_SOURCE_BODY_ENTRY_CPP)
+            
+        source_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_source_apis_path))) \
+                        if not self.language.startswith("c") else\
+                        self.filter_invalid_entries_4cpp(json.load(open(self.llm_labelled_source_apis_path)))
         source_apis_flags = ["get", "invoke"] if self.language == "java" else ["get"]
         source_api_entries = [
             ql_method_call_source_body_entry_tmp.format(
                 method=api["method"],
                 package= "Attribute" if "." in api["package"] else api["package"],
                 clazz=api["class"],
-            ) for api in source_apis if api["method"].strip() in source_apis_flags and len(api["sink_args"]) >0 and
+            )  if not self.language.startswith("c") else 
+            ql_method_call_source_body_entry_tmp.format(method=api["method"])
+            for api in source_apis if api["method"].strip() in source_apis_flags and len(api["sink_args"]) >0 and
                     len(api["package"]) >= 4
         ]
-        ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON
+        ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else (
+                QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON if self.language == "python" else (
+                QL_FUNC_PARAM_SOURCE_ENTRY_CPP_PART2   
+                    ) 
+            )
         ql_func_param_name_entry_tmp = QL_FUNC_PARAM_NAME_ENTRY if self.language == "java" else QL_FUNC_PARAM_NAME_ENTRY_PYTHON
-        source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
+        source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))\
+                if not self.language.startswith("c")\
+                else self.filter_invalid_entries_4cpp(json.load(open(self.llm_labelled_source_func_params_path)))
         # if "addcrypted" in str(source_params): print(source_params)
         source_params_entries = [
                 ql_func_param_source_entry_tmp.format(
@@ -1078,13 +1110,18 @@ dependencies:
                             arg_name=arg_name
                         ) for arg_name in param_func["tainted_input"]
                     ]),
+                ) if not self.language.startswith("c") else\
+                (
+                    ql_func_param_source_entry_tmp.format(method=param_func["method"]) if 
+                    not param_func["method"].endswith("recv") else
+                    QL_FUNC_PARAM_SOURCE_ENTRY_CPP_PART2.format(method=param_func["method"])
                 )
                 if isinstance(param_func, dict) and len(param_func.get("tainted_input", [])) > 0
                 else "1 = 0"
                 for param_func in source_params if 
                     ( 
                      param_func["method"].strip() in self.source_flags
-                    )  or "java_4" in self.project_name or self.manual_rules is False
+                    )  or "java_4" in self.project_name or self.manual_rules is False or self.language.startswith("c")
         ]
         # TODO: 不考虑external apis会作为source的情况
         all_entries = source_api_entries + source_params_entries
@@ -1110,7 +1147,11 @@ dependencies:
         else:
             body = QL_BODY_OR_SEPARATOR.join(all_entries)
             additional = ""
-        ql_source_predicate_tmp = QL_SOURCE_PREDICATE if self.language == "java" else QL_SOURCE_PREDICATE_PYTHON
+        ql_source_predicate_tmp = QL_SOURCE_PREDICATE if self.language == "java"\
+            else QL_SOURCE_PREDICATE_PYTHON if self.language == "python"\
+            else QL_SOURCE_PREDICATE_CPP
+            
+            
         my_source_content = ql_source_predicate_tmp.format(body=body, additional=additional)
         return my_source_content
 
@@ -1130,8 +1171,9 @@ dependencies:
             f.write(my_source_content)
 
     def build_taint_propagator_qll_with_enumeration(self):
-        summary_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_taint_prop_apis_path)))
-        summary_funcs = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
+        filter_tmp = self.filter_invalid_entries if not self.language.startswith("c") else self.filter_invalid_entries_4cpp
+        summary_apis = filter_tmp(json.load(open(self.llm_labelled_taint_prop_apis_path)))
+        summary_funcs = filter_tmp(json.load(open(self.llm_labelled_source_func_params_path)))
         
         #FIXME: Merge function parameter based taint propagators
         summary_apis = summary_apis + summary_funcs
@@ -1140,9 +1182,10 @@ dependencies:
         kwargs_apis = []
  
         for a in summary_apis:
-            if a["method"] not in self.taint_propagator_flags and "java_4" not in self.project_name and self.manual_rules:continue
+            if a["method"] not in self.taint_propagator_flags and "java_4" not in self.project_name and self.manual_rules\
+             and not self.language.startswith("c"):continue
             
-            identifier = (a["package"], a["class"], a["method"])
+            identifier = (a["package"], a["class"], a["method"]) if not self.language.startswith("c") else (a["method"])
             if identifier not in seen_apis:
                 seen_apis.append(identifier)
                 if "kwargs" in str(a.get("tainted_input", [])):
@@ -1151,7 +1194,10 @@ dependencies:
                 dedup_summary_apis.append(a)
         summary_apis = dedup_summary_apis
         # summary_apis = list(set(summary_apis))  # Deduplicate entries
-        ql_summart_body_entry_tmp = QL_SUMMARY_BODY_ENTRY if self.language == "java" else QL_SUMMARY_BODY_ENTRY_PYTHON
+        ql_summart_body_entry_tmp = QL_SUMMARY_BODY_ENTRY if\
+            self.language == "java" else QL_SUMMARY_BODY_ENTRY_PYTHON\
+            if self.language == "python" else QL_SUMMARY_BODY_ENTRY_CPP
+        
         if len(summary_apis) == 0 or self.no_summary_model:
             body = "1 = 0"
         else:
@@ -1165,7 +1211,9 @@ dependencies:
                     ),
                     clazz=api["class"],
                     method=api["method"],
-                ) for api in summary_apis if "kwargs" not in api.get("tainted_input", [])
+                ) if not self.language.startswith("c") else
+                 ql_summart_body_entry_tmp.format(method = api["method"])
+                for api in summary_apis if "kwargs" not in api.get("tainted_input", [])
             ]
             if len(kwargs_apis) > 0 and self.language == "python":
                 for kw_api in kwargs_apis:
@@ -1176,8 +1224,12 @@ dependencies:
                     )
             body_parts = list(set(body_parts))  # Deduplicate entries
             body_parts += [QL_SUMMARY_BODY_ENTRY_MANUAL_PYTHON] if self.language == "python" else []
+            body_parts += [QL_SUMMARY_BODY_ENTRY_MANUAL_CPP] if self.language.startswith("c") else []
+            
             body = QL_BODY_OR_SEPARATOR.join(body_parts)
-        ql_step_predicate_tmp = QL_STEP_PREDICATE if self.language == "java" else QL_STEP_PREDICATE_PYTHON
+        ql_step_predicate_tmp = QL_STEP_PREDICATE if self.language == "java"\
+            else QL_STEP_PREDICATE_PYTHON if self.language == "python" else\
+            QL_STEP_PREDICATE_CPP
         my_summary_content = ql_step_predicate_tmp.format(body=body)
         return my_summary_content
 
@@ -1187,7 +1239,8 @@ dependencies:
             f.write(self.build_taint_propagator_qll_with_enumeration())
 
     def build_sink_qll_with_enumeration(self):
-        sink_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_sink_apis_path)))
+        filter_tmp = self.filter_invalid_entries_4sink if not self.language.startswith("c") else self.filter_invalid_entries_4cpp
+        sink_apis = filter_tmp(json.load(open(self.llm_labelled_sink_apis_path)))
         if len(sink_apis) == 0:
             body = "1 = 0"
             additional = ""
@@ -1203,12 +1256,12 @@ dependencies:
                     ( any(
                         len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
                         for sink_arg in api["sink_args"]
-                    ) and self.language == "java"):
+                    ) and (self.language == "java" or self.language.startswith("c"))):
                     ql_sink_body_entry_tmp = QL_SINK_BODY_ENTRY if self.language == "java" else (
                         QL_SINK_BODY_ENTRY_PYTHON_KIND1
                         if "." in api["signature"].split("(")[0].split()[-1] else
                         QL_SINK_BODY_ENTRY_PYTHON_KIND2
-                    )
+                    ) if self.language == "python" else QL_SINK_BODY_ENTRY_CPP
                     if self.language == "java":
                         return ql_sink_body_entry_tmp.format(
                             method=api["method"],
@@ -1223,16 +1276,20 @@ dependencies:
                                 if len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
                             ])
                         )
-                    elif "." in api["signature"].split("(")[0].split()[-1]:
+                    elif "." in api["signature"].split("(")[0].split()[-1] and self.language =="python":
                         return ql_sink_body_entry_tmp.format(
                             method=api["method"],
                             package=api["package"],
                             args=QL_SINK_ARG_NAME_ENTRY_PYTHON
                         )
-                    else:
+                    elif self.language =="python":
                         return ql_sink_body_entry_tmp.format(
                             method=api["method"],
                             args=QL_SINK_ARG_NAME_ENTRY_PYTHON
+                        )
+                    elif self.language.startswith("c"):
+                        return ql_sink_body_entry_tmp.format(
+                            method=api["method"],
                         )
                 else:
                     return "1 = 0"
@@ -1246,7 +1303,8 @@ dependencies:
             seen_sink_apis = []
             dedup_sink_apis = []
             for a in sink_apis:
-                identifier = (a["method"], a.get("package", ""), a.get("class", ""), a.get("signature", ""))
+                identifier = (a["method"], a.get("package", ""), a.get("class", ""), a.get("signature", ""))\
+                                if not self.language.startswith("c") else (a["method"])
                 if identifier not in seen_sink_apis:
                     seen_sink_apis.append(identifier)
                     dedup_sink_apis.append(a)
@@ -1270,7 +1328,8 @@ dependencies:
             else:
                 body = sink_body(sink_apis)
                 additional = ""
-        ql_sink_predicate_tmp = QL_SINK_PREDICATE if self.language == "java" else QL_SINK_PREDICATE_PYTHON
+        ql_sink_predicate_tmp = QL_SINK_PREDICATE if self.language == "java"\
+        else QL_SINK_PREDICATE_PYTHON if self.language == "python" else QL_SINK_PREDICATE_CPP
         my_sink_content = ql_sink_predicate_tmp.format(body=body, additional=additional)
         return my_sink_content
 
@@ -1288,10 +1347,12 @@ dependencies:
 
     def build_extension_yml(self):
         # First load labelled sources, sinks, and taint-propagators
-        source_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_apis_path)))
-        source_params = self.filter_invalid_entries(json.load(open(self.llm_labelled_source_func_params_path)))
-        sink_apis = self.filter_invalid_entries_4sink(json.load(open(self.llm_labelled_sink_apis_path)))
-        taint_prop_apis = self.filter_invalid_entries(json.load(open(self.llm_labelled_taint_prop_apis_path)))
+        filter_1 = self.filter_invalid_entries if not self.language.startswith("c") else self.filter_invalid_entries_4cpp
+        filter_2 = self.filter_invalid_entries_4sink if not self.language.startswith("c") else self.filter_invalid_entries_4cpp
+        source_apis = filter_1(json.load(open(self.llm_labelled_source_apis_path)))
+        source_params = filter_1(json.load(open(self.llm_labelled_source_func_params_path)))
+        sink_apis = filter_2(json.load(open(self.llm_labelled_sink_apis_path)))
+        taint_prop_apis = filter_1(json.load(open(self.llm_labelled_taint_prop_apis_path)))
 
         # Convert into entries
         source_api_entries = "\n".join([
@@ -1360,6 +1421,7 @@ dependencies:
             self.build_and_save_sink_qll_with_sink_node()
 
         # NOT WORKING YAML
+        if self.language.startswith("c"):return
         self.project_logger.info("  ==> Building extension yml...")
         self.build_and_save_extension_yml()
 
@@ -1382,7 +1444,7 @@ dependencies:
         os.makedirs(codeql_query_dir, exist_ok=True)
         
         query_list =  QUERIES[query_tmp]["queries"][2:] if self.language == "java" else \
-            QUERIES[query_tmp]["queries"][:2] if self.language == "python" else QUERIES[query_tmp]["queries"][2:] 
+            QUERIES[query_tmp]["queries"][:2] if self.language == "python" else QUERIES[query_tmp]["queries"][4:] 
         for q in query_list:  # Only copy the first two files (ql and qll)
             query_dest_path = f"{codeql_query_dir}/{q.split('/')[-1]}"
             if not os.path.exists(query_dest_path):
@@ -1479,12 +1541,16 @@ dependencies:
             print("Not found ", file_dir)
             return ""
         else:
-            file_lines = list(open(file_dir, 'r').readlines())
-            if line_num > len(file_lines):
+            try:
+                file_lines = list(open(file_dir, 'r').readlines())
+                if line_num > len(file_lines):
+                    return ""
+                else:
+                    line = file_lines[line_num - 1]
+                    return line
+            except Exception as e:
+                print("Read file error ", file_dir, e)
                 return ""
-            else:
-                line = file_lines[line_num - 1]
-                return line
 
     def is_valid_code_flow(self, code_flow, source_is_func_param, project_methods):
         thread_flow = code_flow["threadFlows"][0]
@@ -1550,7 +1616,12 @@ dependencies:
 
         # 1. Extract class and function locations
         self.project_logger.info("  ==> Extracting function and class locations...")
-        self.extract_class_locations()
+        if not self.language.startswith("c"):
+            self.extract_class_locations()
+        else:
+            os.makedirs(os.path.dirname(self.class_locs_path), exist_ok=True)
+            with open(self.class_locs_path, "w") as f:
+                f.write("\"name\",\"file\",\"start_line\",\"end_line\"\n")
         self.extract_func_locations()
 
         # 2. Create and run the pipeline
@@ -1574,7 +1645,8 @@ dependencies:
             self.test_run,
             posthoc_filtering_skip_fp=self.posthoc_filtering_skip_fp,
             rerun_skipped_fp=self.posthoc_filtering_rerun_skipped_fp,
-            vulnerability_patch=self.vulnerability_patch
+            vulnerability_patch=self.vulnerability_patch,
+            skip_source_post_cache = self.skip_source_post_cache
         )
         contextual_analysis_pipeline.run()
 
@@ -1651,7 +1723,6 @@ dependencies:
         # 2. Collect all the internal function parameters
         self.collect_internal_function_parameters()
 
-        # exit(111)
         # 3. Query GPT for source/taint-propagator/sink from external APIs
         self.query_gpt_for_api_src_tp_sink_batched()
 
@@ -1660,13 +1731,11 @@ dependencies:
         # 4. Query GPT for sources among internal function parameters
         self.query_gpt_for_func_param_src()
 
-
         # 5. Build local query for this project
         self.build_project_specific_query()
-
+        
         # 6. Send the local query for vulnerability detection
         self.find_vulnerability()
-
 
         # 7. Do a post-processing step for rule-based filtering of paths
         self.post_process_cwe_query_result()
@@ -1719,6 +1788,7 @@ if __name__ == '__main__':
     parser.add_argument("--diff-path", type=str, default="")
     parser.add_argument("--general", action="store_true")
     parser.add_argument("--manual_rules", action="store_true")
+    parser.add_argument("--skip-source-post-cache", action="store_true")
     args = parser.parse_args()
 
     # Set basic properties
@@ -1760,7 +1830,8 @@ if __name__ == '__main__':
         language=args.language,
         diff_path=args.diff_path,
         general=args.general,
-        manual_rules=args.manual_rules
+        manual_rules=args.manual_rules,
+        skip_source_post_cache=args.skip_source_post_cache
     )
 
     pipeline.run()

@@ -58,7 +58,9 @@ class CodeQLQueryRunner:
                 f.write(content)
 
         # 4. Setup the paths
-        main_query = QUERIES[query]["queries"][0] if self.language == "java" else ( QUERIES[query]["queries"][1]  )
+        main_query = QUERIES[query]["queries"][0] if self.language == "java" else \
+        ( QUERIES[query]["queries"][1]  if self.language == "python" 
+            else QUERIES[query]["queries"][2]       )
         main_query_name = main_query.split("/")[-1]
         codeql_query_path = f"{codeql_query_dir}/{main_query_name}"
 
@@ -68,7 +70,7 @@ class CodeQLQueryRunner:
         os.makedirs(query_result_path, exist_ok=True)
 
         # 5. Run the query and generate result bqrs
-        if self.language == "java" or (self.language == "python" and main_query.endswith(".ql")):
+        if self.language == "java"  or self.language.startswith("c") or (self.language == "python" and main_query.endswith(".ql")):
             # 原有的CodeQL查询执行方式
             codeql_tmp = "./codeql/codeql" if (self.language == "java" and query.startswith("fetch1")) else f"codeql"
             prj_db_tmp = self.project_codeql_db_path
@@ -97,7 +99,7 @@ class CodeQLQueryRunner:
                     exit(1)
 
         # 6. Decode the query (仅适用于Java/CodeQL)
-        if (self.language == "java") or (self.language == "python" and main_query.endswith(".ql")):
+        if (self.language == "java") or self.language.startswith("c") or (self.language == "python" and main_query.endswith(".ql")):
             codeql_tmp = "./codeql/codeql" if (self.language == "java" and query.startswith("fetch1")) else f"codeql"
             sp.run([codeql_tmp, "bqrs", "decode", query_result_bqrs_path, "--format=csv", f"--output={query_result_csv_path}"])
             if not os.path.exists(query_result_csv_path):

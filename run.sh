@@ -26,7 +26,7 @@ echo "步骤 2 完成"
 
 # 运行命令 3: get_packages_codeql.py 或 fetch_package_names_python.py
 echo "步骤 3: 运行 get_packages_codeql.py 或 fetch_package_names_python.py"
-if [ "$LANG" == "java" ]; then
+if [ "$LANG" == "java" or "$LANG" == "cpp"]; then
     echo "运行: python3 scripts/get_packages_codeql.py final_${LANG}_0_${CVE}_1.0.0"
     python3 scripts/get_packages_codeql.py "final_${LANG}_0_${CVE}_1.0.0"
 elif [ "$LANG" == "python" ]; then

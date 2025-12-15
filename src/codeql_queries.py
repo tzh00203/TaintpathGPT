@@ -10,6 +10,18 @@ predicate isGPTDetectedSource(DataFlow::Node src) {{
 {additional}
 """
 
+QL_SOURCE_PREDICATE_CPP = """\
+import cpp
+import semmle.code.cpp.ir.dataflow.DataFlow
+import semmle.code.cpp.ir.dataflow.TaintTracking
+
+predicate isGPTDetectedSource(DataFlow::Node src) {{
+{body}
+}}
+
+{additional}
+"""
+
 QL_SOURCE_PREDICATE_PYTHON = """\
 import python
 import semmle.python.dataflow.new.DataFlow
@@ -27,6 +39,18 @@ QL_SINK_PREDICATE = """\
 import java
 import semmle.code.java.dataflow.DataFlow
 private import semmle.code.java.dataflow.ExternalFlow
+
+predicate isGPTDetectedSink(DataFlow::Node snk) {{
+{body}
+}}
+
+{additional}
+"""
+
+QL_SINK_PREDICATE_CPP = """\
+import cpp
+import semmle.code.cpp.ir.dataflow.DataFlow
+import semmle.code.cpp.ir.dataflow.TaintTracking
 
 predicate isGPTDetectedSink(DataFlow::Node snk) {{
 {body}
@@ -65,6 +89,16 @@ predicate isGPTDetectedStep(DataFlow::Node prev, DataFlow::Node next) {{
 }}
 """
 
+QL_STEP_PREDICATE_CPP = """\
+import cpp
+import semmle.code.cpp.ir.dataflow.DataFlow
+import semmle.code.cpp.ir.dataflow.TaintTracking
+
+predicate isGPTDetectedStep(DataFlow::Node prev, DataFlow::Node next) {{
+{body}
+}}
+"""
+
 QL_STEP_PREDICATE_PYTHON = """\
 import python
 import semmle.python.dataflow.new.DataFlow
@@ -82,6 +116,11 @@ QL_METHOD_CALL_SOURCE_BODY_ENTRY = """\
     )\
 """
 
+QL_METHOD_CALL_SOURCE_BODY_ENTRY_CPP = """\
+    (
+       src.asExpr().(Call).getTarget().hasName("{method}")
+    )\
+"""
 
 QL_METHOD_CALL_SOURCE_BODY_ENTRY_PYTHON = """\
     exists(Call c, Attribute attr |
@@ -103,6 +142,19 @@ QL_FUNC_PARAM_SOURCE_ENTRY = """\
         p.getCallable().getDeclaringType().getSourceDeclaration().hasQualifiedName("{package}", "{clazz}") and
         ({params})
     )\
+"""
+
+QL_FUNC_PARAM_SOURCE_ENTRY_CPP_PART1 = """\
+     (
+       src.asExpr().(Call).getTarget().hasName("{method}")
+    )\
+"""
+
+QL_FUNC_PARAM_SOURCE_ENTRY_CPP_PART2 = """\
+    exists(Function c |
+        c.hasName("{method}") and
+        src.asParameter() = c.getAParameter()
+  )\
 """
 
 QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON = """\
@@ -145,6 +197,16 @@ QL_SUMMARY_BODY_ENTRY = """\
     )\
 """
 
+QL_SUMMARY_BODY_ENTRY_CPP = """\
+    exists(Call c |
+        (
+            c.toString() = "call to {method}" and
+            c.getAnArgument() = prev.asExpr() and
+            c.getAnArgument() = next.asExpr()
+        )
+    )\
+"""
+
 QL_SUMMARY_BODY_ENTRY_PYTHON = """\
   exists( Attribute attr, Call c, Function f |
     c.getFunc() = attr and
@@ -177,6 +239,13 @@ QL_SINK_BODY_ENTRY = """\
         c.getCallee().getDeclaringType().getSourceDeclaration().hasQualifiedName("{package}", "{clazz}") and
         ({args})
     )\
+"""
+
+QL_SINK_BODY_ENTRY_CPP = """\
+    exists(Call c|
+      c.toString() = "call to {method}" and
+      snk.asExpr() = c.getAnArgument()
+  )\
 """
 
 QL_SINK_BODY_ENTRY_PYTHON_KIND1 = """\

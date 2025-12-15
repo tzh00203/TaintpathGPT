@@ -45,7 +45,7 @@ Package,Class,Method,Signature
 
 FUNC_PARAM_LABELLING_SYSTEM_PROMPT = """\
 You are a security expert. \
-You are given a list of APIs implemented in established Java or Python libraries, \
+You are given a list of APIs implemented in established Java, C/CPP or Python libraries, \
 and you need to identify whether some of these APIs could be potentially invoked by downstream libraries with malicious end-user (not programmer) inputs. \
 For instance, functions that deserialize or parse inputs might be used by downstream libraries and would need to add sanitization for malicious user inputs. \
 On the other hand, functions like HTTP request handlers are typically final and won't be called by a downstream package. \
@@ -64,7 +64,7 @@ Do not output anything other than JSON.\
 """
 
 FUNC_PARAM_LABELLING_USER_PROMPT = """\
-You are analyzing the Java and Python package {project_username}/{project_name}. \
+You are analyzing the Java, C/CPP and Python package {project_username}/{project_name}. \
 Here is the package summary:
 
 {project_readme_summary}
@@ -76,7 +76,7 @@ Important: The vulnerability diff above provides context about security issues i
 Do not limit your analysis to only the vulnerability types shown in the diff.
 
 Please look at the following public methods in the library and their documentations (if present). \
-What are the most important functions that look like can be invoked by a downstream Java or Python package that is dependent on {project_name}, \
+What are the most important functions that look like can be invoked by a downstream Java, C/CPP or Python package that is dependent on {project_name}, \
 and that the function can be called with potentially malicious end-user inputs? \
 If the package does not seem to be a library, just return empty list as the result. \
 Utility functions that are not related to the primary purpose of the package should also be ignored.
@@ -89,12 +89,15 @@ Package,Class,Method,Doc
 
 POSTHOC_FILTER_SYSTEM_PROMPT = """\
 You are an expert in detecting security vulnerabilities. \
-You are given the starting point (source) and the ending point (sink) of a dataflow path in a Java / Python project that may be a potential vulnerability. \
+You are given the starting point (source) and the ending point (sink) of a dataflow path in a Java / C / Python project that may be a potential vulnerability. \
 Analyze the given taint source and sink and predict whether the given dataflow can be part of a vulnerability or not, and store it as a boolean in "is_vulnerable". \
 Note that, the source must be either a) the formal parameter of a public library function which might be invoked by a downstream package, or b) the result of a function call that returns tainted input from end-user. \
 If the given source or sink do not satisfy the above criteria, mark the result as NOT VULNERABLE. \
 Please provide a very short explanation associated with the verdict. \
-Assume that the intermediate path has no sanitizer.
+
+[important]
+you need to pay attention to check whether there might be sanitizers in the \
+    intermediate steps that would prevent the vulnerability point from being triggered.
 
 Answer in JSON object with the following format:
 
@@ -105,9 +108,35 @@ Answer in JSON object with the following format:
 
 Do not include anything else in the response.\
 """
-
 POSTHOC_FILTER_USER_PROMPT = """\
-Analyze the following dataflow path in a Java / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}).
+Analyze the following dataflow path in a Java / C / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}).
+{hint}
+
+The vulnerability patch for the project to be analyzed is shown below. 
+[important] 
+!!!Note: For C projects, consider that taint may originate from memory \
+    reads after passive connections, not just direct sources. 
+    Check if intermediate steps include paths that read tainted data from memory.!!!
+---patch_start---
+{vulnerability_patch}
+---patch_end---
+
+Source ({source_msg}):
+```
+{source}
+```
+
+Steps:
+{intermediate_steps}
+
+Sink ({sink_msg}):
+```
+{sink}
+```\
+"""
+
+POSTHOC_FILTER_USER_PROMPT_W_PATCH = """\
+Analyze the following dataflow path in a Java / C / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}).
 {hint}
 
 The vulnerability patch for the project to be analyzed is shown below. 
@@ -136,7 +165,7 @@ Sink ({sink_msg}):
 """
 
 POSTHOC_FILTER_USER_PROMPT_W_CONTEXT = """\
-Analyze the following dataflow path in a Java project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}), or a relevant vulnerability.
+Analyze the following dataflow path in a Java / C / Python project and predict whether it contains a {cwe_description} vulnerability ({cwe_id}), or a relevant vulnerability.
 {hint}
 
 Source ({source_msg}):
@@ -165,7 +194,8 @@ POSTHOC_FILTER_HINTS = {
     "918": "Server-Side Request Forgery occurs when untrusted input controls the target of an outgoing HTTP or other protocol request. Watch for user input flowing into URL constructors, HTTP client execute/connect methods, or SSRF-related libraries without validation.",
     "502": "Be cautious of calls to deserialization methods like `readObject()` or `deserialize()` when passed data from untrusted sources. Attackers may craft malicious object graphs or gadget chains to trigger unexpected behavior or even remote code execution. Check if class allowlisting or validation is in place. Avoid deserializing directly from network input or unvalidated byte arrays.",
     "807": "Pay special attention to cases where user-controlled input is directly used in permission checks (e.g., permission strings or resource identifiers). Focus on whether permission checks (such as Subject.isPermitted or similar APIs) rely on tainted or untrusted data, which may allow privilege escalation or unauthorized access.",
-    "352": "Check if the JSONP callback parameter is validated or restricted. Unchecked callback parameters may allow attackers to inject arbitrary JavaScript, leading to CSRF or data theft."
+    "352": "Check if the JSONP callback parameter is validated or restricted. Unchecked callback parameters may allow attackers to inject arbitrary JavaScript, leading to CSRF or data theft.",
+    "general": "Ensure comprehensive analysis of potential vulnerabilities across different attack vectors, including but not limited to injection, authentication, authorization, SSRF, deserialization issues, and any other security weaknesses in the system. Pay attention to both common and edge-case vulnerabilities in the code flow."
 }
 
 SNIPPET_CONTEXT_SIZE = 4

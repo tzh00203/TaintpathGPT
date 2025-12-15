@@ -1,9 +1,21 @@
 ## run_simple
-python3 src/iris_input.py CVE-xxxx-xxxx
+python3 src/iris_input.py CVE-XXXX-XXXX c BR-6208AC_V2_1.02(your product model)     
 python scripts/build_codeql_dbs.py --project match_{lang}_0_CVE-xxxx-xxxx_1.0.0 --language {lang}
 python3 scripts/get_packages_codeql.py final_{lang}_0_CVE-xxxx-xxxx_1.0.0
 python src/iris.py --query cwe-022wLLM --run-id test --llm remote_qwen final_{lang}_0_CVE-xxxx-xxxx_1.0.0  --language {lang} --general 
 
+
+
+## Step 1
+  python3 src/iris_input.py CVE-XXXX-XXXX c BR-6208AC_V2_1.02(your product model)   
+
+## Step 2 
+codeql database create /data_hdd/tzh24/zgc4/projects/tools/iris/src/../data/codeql-dbs/paper_c_5_CVE-XXXX-XXXX_BR-6208AC_V2_1.02(your source code path)    --source-root /data_hdd/tzh24/zgc4/projects/tools/iris/data/project-sources/paper_c_5_CVE-XXXX-XXXX_BR-6208AC_V2_1.02 (your source code DB) \
+   --language c\
+  --build-mode=none  --overwrite
+
+## Step 3
+  python src/iris.py --query cwe-078wLLM --run-id test --llm remote_qwen paper_c_5_CVE-XXXX-XXXX_BR-6208AC_V2_1.02    --language cpp --general --skip-source-post-cache
 
 ## 🚀 Set Up
 ### Using Docker (Recommended)

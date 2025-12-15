@@ -688,10 +688,12 @@ Sources typically include untrusted HTTP request parameters (such as 'callback')
     "cwe_id_tag": "CWE-general",
     "desc": "General Taintflow CWE Detection",
     "queries": [
-      "cwe-queries/python-general/query.ql",
-      "cwe-queries/python-general/MyFlow.qll",
-      "cwe-queries/java-general/query.ql",
-      "cwe-queries/java-general/MyFlow.qll",
+      "cwe-queries/general-python/query.ql",
+      "cwe-queries/general-python/MyFlow.qll",
+      "cwe-queries/general-java/query.ql",
+      "cwe-queries/general-java/MyFlow.qll",
+      "cwe-queries/general-cpp/query.ql",
+      "cwe-queries/general-cpp/MyFlow.qll",
     ],
     "prompts": {
       "cwe_id": "CWE-general",
@@ -741,28 +743,30 @@ Sources typically include untrusted HTTP request parameters (such as 'callback')
     "queries": [
       "queries/fetch_external_apis.ql",
       "queries/fetch_external_apis_python.py",
-      "queries/fetch_external_apis_python.py"
+      "queries/fetch_external_apis_cpp.ql"
     ]
   },
   "fetch_func_params": {
     "name": "fetch_func_params",
     "queries": [
       "queries/fetch_func_params.ql",
-      "queries/fetch_func_params_python.py"
+      "queries/fetch_func_params_python.py",
+      "queries/fetch_func_params_cpp.ql"
     ]
   },
   "fetch_func_locs": {
     "name": "fetch_func_locs",
     "queries": [
       "queries/fetch_func_locs.ql",
-      "queries/fetch_func_locs_python.ql"
+      "queries/fetch_func_locs_python.ql",
+      "queries/fetch_func_locs_cpp.ql"
     ]
   },
   "fetch_class_locs": {
     "name": "fetch_class_locs",
     "queries": [
       "queries/fetch_class_locs.ql",
-      "queries/fetch_class_locs_python.py"
+      "queries/fetch_class_locs_python.py",
     ]
   },
   "fetch_sources": {

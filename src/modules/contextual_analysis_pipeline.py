@@ -45,6 +45,7 @@ class ContextualAnalysisPipeline:
             skip_check_fixed_method: bool = False,
             batch_size: int = 3,
             vulnerability_patch: str = "",
+            skip_source_post_cache: bool = False,
     ):
         self.query = query
         self.cwe_id = cwe_id
@@ -70,6 +71,7 @@ class ContextualAnalysisPipeline:
         self.skip_check_fixed_method = skip_check_fixed_method
         self.alarm_results = {}
         self.vulnerability_patch = vulnerability_patch
+        self.skip_source_post_cache = skip_source_post_cache
 
     def get_model(self):
         if self.model is None:
@@ -240,10 +242,11 @@ class ContextualAnalysisPipeline:
 
     def intermediate_step_prompt(self, i, loc, enclosing_func_locs):
         file_name = loc["file_url"].split("/")[-1]
-        longer_file_name = loc["file_url"].split("/")[-2] + "/" + loc["file_url"].split("/")[-1]
+        # print(loc["file_url"])
+        # longer_file_name = loc["file_url"].split("/")[-2] + "/" + loc["file_url"].split("/")[-1]
         
-        if len(loc["file_url"].split("/")) >= 3:
-            longer_file_name = loc["file_url"].split("/")[-3] + "/" + longer_file_name
+        # if len(loc["file_url"].split("/")) >= 3:
+        #     longer_file_name = loc["file_url"].split("/")[-3] + "/" + longer_file_name
         
         file_dir = f"{self.project_source_code_dir}/{loc['file_url']}"
         if not os.path.exists(file_dir): return None
@@ -397,7 +400,8 @@ class ContextualAnalysisPipeline:
             result = self.alarm_results[result_id]
 
         # The second caching strategy where Source is cached to be false positive
-        elif source in false_positive_source_cache and false_positive_source_cache[source]:
+        elif source in false_positive_source_cache and false_positive_source_cache[source] and\
+            not self.skip_source_post_cache:
             using_cache = True
             sink_is_false_positive = false_positive_sink_cache[sink] if sink in false_positive_sink_cache else None
             result = {
@@ -724,7 +728,6 @@ class ContextualAnalysisPipeline:
                     num_processed += 1
                     num_ignored += 1
                 else:
-
                     if len(to_query_batch) < self.batch_size:
                         to_query_batch.append((result_id, code_flow_id, code_flow))
 
