@@ -4,6 +4,8 @@ from utils.mylogger import MyLogger
 from models.llm import LLM
 from models.remote_config import API_URL, API_KEY
 from pprint import pprint
+import concurrent.futures
+from tqdm import tqdm
 
 api_url = API_URL
 api_key = API_KEY
@@ -17,31 +19,69 @@ class QwenAPIRemote:
         else:
             self.log = lambda msg: print(msg)
 
+    # def predict(self, prompts, batch_size=0, no_progress_bar=True, **kwargs):
+    #     """
+    #     prompts: str or List[str]
+    #     batch_size: ignored here, kept for interface compatibility
+    #     Returns a string (single prompt) or list of strings (batch)
+    #     """
+    #     # 如果是单条 prompt，转成列表
+    #     is_single = False
+    #     if isinstance(prompts, str):
+    #         prompts = [prompts]
+    #         is_single = True
+
+    #     results = []
+    #     for prompt in prompts:
+    #         try:
+    #             answer = self._call_api(prompt, stream=False, **kwargs)
+    #             results.append(answer)
+    #         except Exception as e:
+    #             self.log(f"[ERROR] Failed to get response for prompt: {e}")
+    #             results.append("")
+
+    #     if is_single:
+    #         return results[0]
+    #     return results
+    def fetch_answer(self, prompt, **kwargs):
+        """
+        request with each
+        """
+        try:
+            answer = self._call_api(prompt, stream=False, **kwargs)
+            return answer
+        except Exception as e:
+            self.log(f"[ERROR] Failed to get response for prompt: {e}")
+            return ""
+
     def predict(self, prompts, batch_size=0, no_progress_bar=True, **kwargs):
         """
         prompts: str or List[str]
         batch_size: ignored here, kept for interface compatibility
         Returns a string (single prompt) or list of strings (batch)
         """
-        # 如果是单条 prompt，转成列表
         is_single = False
         if isinstance(prompts, str):
             prompts = [prompts]
             is_single = True
 
         results = []
-        for prompt in prompts:
-            try:
-                answer = self._call_api(prompt, stream=False, **kwargs)
-                results.append(answer)
-            except Exception as e:
-                self.log(f"[ERROR] Failed to get response for prompt: {e}")
-                results.append("")
+        if not no_progress_bar:
+            prompts = tqdm(prompts, desc="Processing prompts")
 
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # 处理批量
+            if batch_size > 0:
+                for i in range(0, len(prompts), batch_size):
+                    batch = prompts[i:i + batch_size]
+                    batch_results = list(executor.map(lambda prompt: self.fetch_answer(prompt, **kwargs), batch))
+                    results.extend(batch_results)
+            else:
+                results = list(executor.map(lambda prompt: self.fetch_answer(prompt, **kwargs), prompts))
         if is_single:
             return results[0]
         return results
-
+    
     def _call_api(self, prompt, stream=False, temperature=0.7, top_p=0.9):
         """use Qwen API"""
         headers = {
@@ -49,7 +89,7 @@ class QwenAPIRemote:
             "Authorization": f"Bearer {self.api_key}"
         }
         payload = {
-            "model": "gpt-5",
+            # "model": "gpt-5",
             "messages":prompt,
             "temperature": temperature,
             "top_p": top_p,

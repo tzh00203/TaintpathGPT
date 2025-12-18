@@ -77,7 +77,7 @@ class SAPipeline:
             llm: str = "gpt-4",
             label_api_batch_size: int = 30,
             label_func_param_batch_size: int = 50,
-            num_threads: int = 3,
+            num_threads: int = 5,
             seed: int = 1234,
             no_summary_model: bool = False,
             use_exhaustive_qll: bool = False,
@@ -1767,7 +1767,7 @@ if __name__ == '__main__':
     parser.add_argument("--seed", type=int, default=1234)
     parser.add_argument("--label-api-batch-size", type=int, default=30)
     parser.add_argument("--label-func-param-batch-size", type=int, default=20)
-    parser.add_argument("--num-threads", type=int, default=3)
+    parser.add_argument("--num-threads", type=int, default=5)
     parser.add_argument("--no-summary-model", action="store_true")
     parser.add_argument("--use-exhaustive-qll", action="store_true")
     parser.add_argument("--filter-by-module", action="store_true")

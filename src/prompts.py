@@ -53,6 +53,11 @@ Utility functions that are not related to the primary purpose of the package sho
 Please also note the case where the taint flow serves as the class of the called method (like getName etc.). In this scenario, consider whether the taint may propagate to variables returned by the called method.\
 Return the result as a json list with each object in the format:
 
+[Things to note:]
+1. Functions with parameters containing param type 'request' / 'req' are usually treated as sources handling front-end web requests. These functions typically deal with untrusted inputs from users, such as form submissions, and should be flagged as sources.
+2. Functions involved in processing or validating user input, such as handling HTTP requests or manipulating data submitted from a web form, are also considered sources.
+3. Functions that interact with the web, such as setting up routes or managing network connections, should also be classified as sources if they receive input from the client side (e.g., via HTTP requests).
+
 { "package": <package name>,
   "class": <class name>,
   "method": <method name>,
