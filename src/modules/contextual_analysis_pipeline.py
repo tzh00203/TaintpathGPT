@@ -46,6 +46,7 @@ class ContextualAnalysisPipeline:
             batch_size: int = 3,
             vulnerability_patch: str = "",
             skip_source_post_cache: bool = False,
+            qlpack_lock_yml: str = "",
     ):
         self.query = query
         self.cwe_id = cwe_id

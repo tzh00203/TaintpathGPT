@@ -406,7 +406,7 @@ dependencies:
 
     def collect_invoked_external_apis(self):
         self.project_logger.info("==> Stage 1: Collecting external APIs...")
-
+        
         # 1. Invoke CodeQL to extract the external APIs
         if not os.path.exists(self.external_apis_csv_path) or self.overwrite or self.overwrite_api_candidates:
             self.project_logger.info("  ==> Extracting all external APIs by running CodeQL/Python... ", no_new_line=True)
@@ -1702,6 +1702,11 @@ dependencies:
                 self.project_logger.info("==> Stage 10.1: Debug sinks...")
                 self.run_simple_codeql_query("fetch_sinks", suffix=f"cwe-{self.cwe_id}", dyn_queries={"MySinks.qll": self.build_sink_qll_with_enumeration()})
 
+    def prepare_project(self):
+        self.project_logger.info("==> Stage 0: Preparing project...")
+        if not os.path.exists(self.pack_lock_yml):
+            shutil.copy(f"{IRIS_ROOT_DIR}/scripts/codeql-queries/codeql-pack.lock.yml", f"{self.custom_codeql_root}/codeql-pack.lock.yml")
+
     def run(self):
         # Check if we need to continue running
         if os.path.exists(self.query_output_result_sarif_pp_path) and os.path.exists(self.posthoc_filtering_output_result_sarif_path) \
@@ -1716,13 +1721,16 @@ dependencies:
             self.evaluate_result()
             self.debug_result()
             exit(1)
-            
+        
+        # # 0. prepare the project
+        # self.prepare_project()
+        
         # 1. Collect all the invoked external APIs
         self.collect_invoked_external_apis()
 
         # 2. Collect all the internal function parameters
         self.collect_internal_function_parameters()
-
+        # exit(11)
         # 3. Query GPT for source/taint-propagator/sink from external APIs
         self.query_gpt_for_api_src_tp_sink_batched()
 

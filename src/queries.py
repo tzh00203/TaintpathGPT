@@ -751,7 +751,8 @@ Sources typically include untrusted HTTP request parameters (such as 'callback')
     "queries": [
       "queries/fetch_func_params.ql",
       "queries/fetch_func_params_python.py",
-      "queries/fetch_func_params_cpp.ql"
+      "queries/fetch_func_params_cpp.ql",
+      "queries/fetch_func_params_cpp.py",
     ]
   },
   "fetch_func_locs": {

@@ -21,11 +21,29 @@ ENTRY_SCRIPT_DIR = os.path.abspath(os.path.dirname(os.path.realpath(__file__)) +
 class CodeQLQueryRunner:
     def __init__(self, project_output_path, project_codeql_db_path, project_logger, language):
         self.project_output_path = project_output_path
+        self.custom_codeql_root = f"{self.project_output_path}/myqueries/"
+        self.pack_lock_yml = f"{self.custom_codeql_root}/codeql-pack.lock.yml"
+
         self.project_codeql_db_path = project_codeql_db_path
         self.project_logger = project_logger
         self.language = language
         self.project_source_path = ENTRY_SCRIPT_DIR.replace("src", "") + "data/project-sources/" + project_codeql_db_path.split("/")[-1]
-      
+
+    def merge_csv_by_func(self,file1, file2= None, output=None):
+        # print(file1)
+        df1 = pd.read_csv(file1)
+
+        if file2:
+            df2 = pd.read_csv(file2)
+            merged = pd.concat([df1, df2], ignore_index=True)
+            merged = merged.drop_duplicates(subset='func', keep='first')
+            
+            merged.to_csv(file1, index=False)
+            return 
+        merged = df1.drop_duplicates(subset='func', keep='first')
+        merged.to_csv(file1, index=False)
+        return
+
 
     def run(self, query, target_csv_path=None, suffix=None, dyn_queries={}, language_marker=None):
         """
@@ -38,6 +56,9 @@ class CodeQLQueryRunner:
         # 0. Sanity check
         if query not in QUERIES:
             self.project_logger.error(f"  ==> Unknown query `{query}`; aborting"); exit(1)
+        if not os.path.exists(self.pack_lock_yml):
+            codeql_pack_install_cmd = ["codeql", "pack", "install", self.custom_codeql_root]
+            sp.run(codeql_pack_install_cmd)
 
         # 1. Create the directory in CodeQL's queries path
         suffix_dir = "" if suffix is None else f"/{suffix}"
@@ -77,6 +98,10 @@ class CodeQLQueryRunner:
             prj_db_tmp += "_old" if (self.language == "java" and query.startswith("fetch1")) else ""
             print([codeql_tmp, "query", "run", f"--database={prj_db_tmp}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
             sp.run([codeql_tmp, "query", "run", f"--database={prj_db_tmp}", f"--output={query_result_bqrs_path}", "--", codeql_query_path])
+            
+            if self.language.startswith("c") and query == "fetch_func_params":
+                sp.run(["python3", codeql_query_path.replace('.ql', '.py'), self.project_source_path, query_result_bqrs_path.replace(".bqrs", "_py.csv")])
+
         else:  # python
             # Python脚本执行方式
             project_source_path = self.project_source_path  # 需要确保这个属性存在，指向项目源代码目录
@@ -105,6 +130,12 @@ class CodeQLQueryRunner:
             if not os.path.exists(query_result_csv_path):
                 self.project_logger.error(f"  ==> Failed to decode result bqrs from `{query}`; aborting")
                 exit(1)
+            if self.language.startswith("c") and query == "fetch_func_params":
+                self.merge_csv_by_func(query_result_csv_path, query_result_csv_path.replace(".csv", "_py.csv"))
+
+            elif query == "fetch_external_apis":
+                self.merge_csv_by_func(query_result_csv_path)
+
         else:  # python
             # 对于Python，直接使用脚本生成的CSV文件
             query_result_csv_path = python_result_csv

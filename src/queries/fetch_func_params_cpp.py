@@ -10,6 +10,7 @@ import sys
 import csv
 from typing import List, Dict, Any, Set, Tuple, Optional
 from datetime import datetime
+from tqdm import tqdm
 
 class CCppConditionalFunctionExtractor:
     def __init__(self, project_root: str = None):
@@ -482,7 +483,7 @@ class CCppConditionalFunctionExtractor:
                         self.seen_records.add(unique_key)
                         results.append(func_info)
                         
-                        print(f"  ✓ {func_info['func']} (line {line_num}) - Inside #{cond_type.lower()} {cond_macro} block")
+                        # print(f"  ✓ {func_info['func']} (line {line_num}) - Inside #{cond_type.lower()} {cond_macro} block")
                 
         except Exception as e:
             print(f"Error analyzing {file_path}: {e}")
@@ -493,8 +494,8 @@ class CCppConditionalFunctionExtractor:
         """分析整个目录"""
         all_results = []
         
-        print(f"📁 Scanning directory: {directory}")
-        print("-" * 60)
+        # print(f"📁 Scanning directory: {directory}")
+        # print("-" * 60)
         
         for root, dirs, files in os.walk(directory):
             dirs[:] = [d for d in dirs if d not in self.excluded_dirs]
@@ -503,7 +504,7 @@ class CCppConditionalFunctionExtractor:
                 file_path = os.path.join(root, file)
                 if not self.should_exclude(file_path):
                     relative_path = os.path.relpath(file_path, directory)
-                    print(f"📄 {relative_path}")
+                    # print(f"📄 {relative_path}")
                     results = self.analyze_file(file_path)
                     all_results.extend(results)
         
@@ -511,13 +512,13 @@ class CCppConditionalFunctionExtractor:
 
     def save_results_as_csv(self, results: List[Dict[str, str]], output_dir: str, filename: str = None):
         """保存为CSV文件"""
-        os.makedirs(output_dir, exist_ok=True)
+        # os.makedirs(output_dir, exist_ok=True)
         
         if filename is None:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
             filename = f"complete_conditional_functions_{timestamp}.csv"
         
-        csv_path = os.path.join(output_dir, filename)
+        csv_path = output_dir
         
         fieldnames = [
             'package', 'clazz', 'func', 'full_signature', 
@@ -529,14 +530,13 @@ class CCppConditionalFunctionExtractor:
             writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_ALL)
             writer.writeheader()
             
-            for result in results:
+            for result in tqdm(results, desc="fetch the func params in IFDEF..."):
                 row = {field: result.get(field, "") for field in fieldnames}
                 writer.writerow(row)
         
         print("-" * 60)
-        print(f"💾 Results saved to: {csv_path}")
-        print(f"📊 Total functions in complete conditional blocks: {len(results)}")
-
+        print(f"Results saved to: {csv_path}")
+        print(f"Total functions in complete conditional blocks: {len(results)}")
 
 def main():
     if len(sys.argv) != 3:
@@ -553,13 +553,13 @@ def main():
     
     analyzer = CCppConditionalFunctionExtractor(project_root=source_dir)
     
-    print("🔍 Complete Conditional Block Function Extractor")
-    print("ℹ️  Extracts ONLY functions that are COMPLETELY inside conditional blocks")
-    print("ℹ️  Function must be between #ifdef/#if and matching #endif")
-    print("=" * 60)
+    print("\t\t==>Complete Conditional Block Function Extractor")
+    print("\t\t\t==>Extracts ONLY functions that are COMPLETELY inside conditional blocks")
+    print("\t\t\t==>Function must be between #ifdef/#if and matching #endif")
     
     results = analyzer.analyze_directory(source_dir)
     analyzer.save_results_as_csv(results, output_dir)
+    # return results
 
 
 if __name__ == "__main__":
