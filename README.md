@@ -7,7 +7,7 @@ python src/iris.py --query cwe-022wLLM --run-id test --llm remote_qwen final_{la
 
 
 ## Step 1
-  python3 src/iris_input.py CVE-XXXX-XXXX c BR-6208AC_V2_1.02(your product model)   
+  python3 src/iris_input.py paper_c_6_CVE-XXXX-XXXX_trendnet_boa (type_language_idx_CVE-XXXX-XXXX_your_product) 
 
 ## Step 2 
 codeql database create /data_hdd/tzh24/zgc4/projects/tools/iris/src/../data/codeql-dbs/paper_c_5_CVE-XXXX-XXXX_BR-6208AC_V2_1.02(your source code path)    --source-root /data_hdd/tzh24/zgc4/projects/tools/iris/data/project-sources/paper_c_5_CVE-XXXX-XXXX_BR-6208AC_V2_1.02 (your source code DB) \

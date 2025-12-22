@@ -13,7 +13,134 @@ BASE_OUTPUT_DIR = os.path.join(ROOT_DIR, "../data", "project-sources")
 PROJECT_INFO_CSV = os.path.join(ROOT_DIR, "../data", "project_info.csv")
 HASH_LIST = "030e9d00125cbd1ad759668f85488aba1019c668;a221a864db28eb736d36041df2fa6eb8839fc5cd;ce9e11517eca69e58ed4378d1e47a02bd06863cc"
 
+#!/usr/bin/env python3
+import re
+import sys
+import os
 
+def remove_external_ifdef(code):
+    """
+    移除函数体外部的 #ifdef/#endif 条件编译指令，保留函数体
+    """
+    lines = code.split('\n')
+    result = []
+    i = 0
+    n = len(lines)
+    
+    while i < n:
+        line = lines[i]
+        stripped_line = line.strip()
+        
+        # 检查是否是函数体外的 #ifdef 或 #if
+        if stripped_line.startswith('#ifdef') or stripped_line.startswith('#if') or stripped_line.startswith('#ifndef'):
+            # 查找对应的 #endif
+            ifdef_count = 1
+            j = i + 1
+            start_line = i
+            
+            while j < n and ifdef_count > 0:
+                stripped = lines[j].strip()
+                if stripped.startswith('#ifdef') or stripped.startswith('#if') or stripped.startswith('#ifndef'):
+                    ifdef_count += 1
+                elif stripped.startswith('#endif'):
+                    ifdef_count -= 1
+                    if ifdef_count == 0:
+                        end_line = j
+                        break
+                j += 1
+            
+            if ifdef_count == 0:
+                # 提取 #ifdef 块中的内容
+                block_content = lines[start_line+1:end_line]
+                
+                # 检查块中是否包含函数定义
+                # 合并块内容为字符串进行更全面的检查
+                block_text = '\n'.join(block_content)
+                
+                # 多种函数定义模式
+                function_patterns = [
+                    # 标准函数定义: 返回类型 函数名(参数) {
+                    r'\b(?:void|int|char|float|double|bool|struct|enum|class|unsigned|long|short|static|extern|inline|const|virtual)\s+[\w\*&\s]+\s*\([^)]*\)\s*\{',
+                    # 构造函数/析构函数 (C++)
+                    r'\b(?:public|private|protected):',
+                    # 模板函数 (C++)
+                    r'template\s*<[^>]*>\s*\w+\s+\w+\s*\([^)]*\)\s*\{',
+                ]
+                
+                has_function = False
+                for pattern in function_patterns:
+                    if re.search(pattern, block_text, re.MULTILINE | re.DOTALL):
+                        has_function = True
+                        break
+                
+                if has_function:
+                    # 保留函数体，去掉外部的 #ifdef/#endif
+                    result.extend(block_content)
+                    print(f"已移除条件编译指令: {stripped_line}")
+                else:
+                    # 如果没有函数，保留原始内容（包括 #ifdef）
+                    result.extend(lines[start_line:end_line+1])
+                
+                i = end_line + 1
+                continue
+        
+        # 如果不是函数体外的条件编译，保留原行
+        result.append(lines[i])
+        i += 1
+    
+    return '\n'.join(result)
+def process_file(input_file, output_file=None):
+    """
+    处理单个文件
+    """
+    with open(input_file, 'r', encoding='utf-8', errors='ignore') as f:
+        content = f.read()
+    
+    processed_content = remove_external_ifdef(content)
+    
+    if output_file is None:
+        output_file = input_file
+    else:
+        output_dir = os.path.dirname(output_file)
+        if output_dir:  # 如果不是当前目录
+            os.makedirs(output_dir, exist_ok=True)
+
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(processed_content)
+    
+    print(f"处理完成: {input_file} -> {output_file}")
+    return processed_content
+
+def process_directory(directory, extension='.c'):
+    """
+    处理目录下的所有文件
+    """
+    new_directory = directory
+    
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            if file.endswith(extension) or file.endswith('.cpp') or file.endswith('.h'):
+                file_path = os.path.join(root, file)
+                new_file_path = str(os.path.join(root, file)).replace(directory, new_directory)
+                process_file(file_path, output_file=new_file_path)
+
+def remove_code_ifdef(directory):
+    import shutil
+    
+    backup_dir = directory + "_origin" if not directory[-1] == "/" else directory[:-1] + "_origin/"
+    
+    if os.path.exists(backup_dir):
+        print(f"备份目录已存在: {backup_dir}")
+
+    print(f"备份原始目录: {directory} -> {backup_dir}")
+    try:
+        shutil.copytree(directory, backup_dir)
+        print(f"备份完成")
+    except Exception as e:
+        print(f"备份失败: {e}")
+        return
+    process_directory(directory)
+   
 
 def append_project_info_csv(index, lang, cve, folder_name, vendor=""):
     """向 project_info.csv 追加一行"""
@@ -100,42 +227,16 @@ def merge_patch_files(patch_dir, output_file):
     print(f"📝 已写入 patch 内容到: {output_file}")
 
 
-def process_cve(cve, vendor):
+def process_cve(cve, vendor, idx="0", type="paper", language="c"):
     # lang = detect_language(cve, vendor)
-    lang = "c"
+    lang = language
+
     print(f"🔍 CVE = {cve}, 语言 = {lang}")
 
-    src_base = os.path.join(BASE_INPUT_DIR, lang, cve)
-    src_dir = os.path.join(src_base, "src")
-    patch_dir = os.path.join(src_base, "patch")
-    folder_name = f"paper_{lang}_3_{cve}_{vendor}"
-    output_dirname = f"paper_{lang}_3_{cve}_1.0.0"
-    output_dir = os.path.join(BASE_OUTPUT_DIR, output_dirname)
-
-    print(f"📁 目标目录: {output_dir}")
-    # os.makedirs(output_dir, exist_ok=True)
-
-    # # 处理 src
-    # if not os.path.isdir(src_dir):
-    #     raise Exception(f"❌ src 目录不存在: {src_dir}")
-
-    # src_items = os.listdir(src_dir)
-    # if not src_items:
-    #     raise Exception("❌ src 目录为空")
-
-    # first_item = os.path.join(src_dir, src_items[0])
-
-    # copy_or_extract_src(first_item, output_dir)
-
-    # # 处理 patch
-    # if os.path.isdir(patch_dir):
-    #     diff_file = os.path.join(output_dir, "diff.txt")
-    #     merge_patch_files(patch_dir, diff_file)
-    # else:
-    #     print("⚠️ 无 patch 目录，跳过")
-
-    # print("✅ 完成!")
+    folder_name = f"{type}_{lang}_{idx}_{cve}_{vendor}"
     
+    source_path = os.path.join(BASE_OUTPUT_DIR, folder_name)
+    remove_code_ifdef(source_path)
     # ---- 写 CSV ----
     next_index = get_next_index()
     append_project_info_csv(next_index, lang, cve, folder_name, vendor)
@@ -145,14 +246,24 @@ def process_cve(cve, vendor):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("用法: python3 script.py CVE-XXXX-XXXX")
+        print("用法: python3 src/iris_input.py CVE-XXXX-XXXX c BR-6208AC_V2_1.02(your product model) or python3 src/iris_input.py paper_c_6_CVE-XXXX-XXXX_trendnet_boa")
         sys.exit(1)
 
-    cve_id = sys.argv[1].strip()
+    cve_id = ""
     vendor = ""
-    print(sys.argv)
+    idx = ""
+    language = ""
+    type = ""
     if len(sys.argv) == 4:
         vendor = sys.argv[3].strip()
-        print(vendor)
-    process_cve(cve_id, vendor)
+        cve_id = sys.argv[1].strip()
+        process_cve(cve_id, vendor)
+    elif len(sys.argv) == 2:
+        long_ = sys.argv[1].strip()
+        vendor = long_.split("XXXX_")[-1]
+        cve_id = long_.split("_")[3]
+        idx = long_.split("_")[2]
+        language = long_.split("_")[1]
+        type = long_.split("_")[0]
+        process_cve(cve_id, vendor, idx=idx, type=type, language=language)
 

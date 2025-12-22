@@ -1646,7 +1646,8 @@ dependencies:
             posthoc_filtering_skip_fp=self.posthoc_filtering_skip_fp,
             rerun_skipped_fp=self.posthoc_filtering_rerun_skipped_fp,
             vulnerability_patch=self.vulnerability_patch,
-            skip_source_post_cache = self.skip_source_post_cache
+            skip_source_post_cache = self.skip_source_post_cache,
+            batch_size=self.num_threads
         )
         contextual_analysis_pipeline.run()
 
