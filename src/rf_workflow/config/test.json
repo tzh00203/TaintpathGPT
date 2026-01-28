@@ -1,0 +1,19 @@
+{
+    "project_root": "/data_hdd/tzh24/zgc4/projects/tools/NS-IoT/src/rf_workflow/",  
+    "database_path": "database/database.test",  
+    "database_name": "doxygen_sqlite3.db",  
+    "code_input": "code_input/code_input.test",  
+    "input_encoding": "utf-8",  
+    "output_encoding": "utf-8",  
+    "ai_url": "https://api.chatanywhere.tech/v1/chat/completions",  
+    "api_key": "sk-IvAvgo355hpUt7fDM1wGU37UIfvZ55yIf9oNF5IEj5IpFy3u",  
+    "target_func_list": ["main"],  
+    "entry_func_dict": {
+        "名称": "main",
+        "字段": [
+        ]
+    },  
+    "ext_info": "",  
+    "mode": 0
+  }
+  

@@ -3,6 +3,8 @@ import shutil
 import zipfile
 import sys
 import csv
+from tqdm import tqdm
+import subprocess
 
 # 获取当前脚本所在的根路径
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -11,6 +13,7 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_INPUT_DIR = os.path.join(ROOT_DIR, "../data", "project-sources")  # c/, java/, python/ 所在目录
 BASE_OUTPUT_DIR = os.path.join(ROOT_DIR, "../data", "project-sources")
 PROJECT_INFO_CSV = os.path.join(ROOT_DIR, "../data", "project_info.csv")
+CODEQL_DB_DIR = os.path.join(ROOT_DIR, "../data", "codeql-dbs")
 HASH_LIST = "030e9d00125cbd1ad759668f85488aba1019c668;a221a864db28eb736d36041df2fa6eb8839fc5cd;ce9e11517eca69e58ed4378d1e47a02bd06863cc"
 
 #!/usr/bin/env python3
@@ -118,7 +121,7 @@ def process_directory(directory, extension='.c'):
     new_directory = directory
     
     for root, dirs, files in os.walk(directory):
-        for file in files:
+        for file in tqdm(files):
             if file.endswith(extension) or file.endswith('.cpp') or file.endswith('.h'):
                 file_path = os.path.join(root, file)
                 new_file_path = str(os.path.join(root, file)).replace(directory, new_directory)
@@ -129,6 +132,10 @@ def remove_code_ifdef(directory):
     
     backup_dir = directory + "_origin" if not directory[-1] == "/" else directory[:-1] + "_origin/"
     
+    dirname, basename = os.path.split(directory.rstrip('/'))
+    backup_dir = os.path.join(dirname, "c_with_ifdef", basename) if basename else os.path.join(dirname, "c_with_ifdef") + "/"
+ 
+
     if os.path.exists(backup_dir):
         print(f"备份目录已存在: {backup_dir}")
 
@@ -138,7 +145,6 @@ def remove_code_ifdef(directory):
         print(f"备份完成")
     except Exception as e:
         print(f"备份失败: {e}")
-        return
     process_directory(directory)
    
 
@@ -241,7 +247,57 @@ def process_cve(cve, vendor, idx="0", type="paper", language="c"):
     next_index = get_next_index()
     append_project_info_csv(next_index, lang, cve, folder_name, vendor)
 
-    print("✅ 完成！")
+    print("✅ 源代码处理完成！")
+    build_codeql_db(source_path, os.path.join(CODEQL_DB_DIR,folder_name))
+
+
+def build_codeql_db(source_path, db_path, language="c"):
+    """
+    创建CodeQL数据库
+    """
+    if not os.path.exists(source_path):
+        print(f"源代码路径不存在: {source_path}")
+        return False
+    
+    cmd = [
+        "codeql", "database", "create", db_path,
+        f"--source-root={source_path}",
+        f"--language={language}",
+        "--build-mode=none",
+        "--overwrite"
+    ]
+    
+    print(f"开始创建数据库...")
+    print(f"命令: {' '.join(cmd)}")
+    
+    try:
+        result = subprocess.run(
+            cmd, 
+            capture_output=True, 
+            text=True,
+            timeout=600
+        )
+        
+        if result.returncode == 0:
+            print(f"✅ 数据库创建完成")
+            if os.path.exists(db_path):
+                return True
+            else:
+                print(f"数据库路径不存在")
+                return False
+        else:
+            print(f"创建失败: {result.stderr[:200]}")
+            return False
+            
+    except subprocess.TimeoutExpired:
+        print(f"创建超时")
+        return False
+    except FileNotFoundError:
+        print(f"找不到codeql命令")
+        return False
+    except Exception as e:
+        print(f"异常: {str(e)}")
+        return False
 
 
 if __name__ == "__main__":

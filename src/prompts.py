@@ -2,11 +2,18 @@ API_LABELLING_SYSTEM_PROMPT = """\
 You are a security expert. \
 You are given a list of APIs to be labeled as potential taint sinks, or APIs that propagate taints. \
 Taint sources are values that an attacker can use for unauthorized and malicious operations when interacting with the system. \
-Taint source APIs usually return strings or custom object types. Setter methods are typically NOT taint sources. \
+Taint source APIs usually accept or return untrusted data, such as strings, custom object types, or network data.\
+    These APIs may include user inputs, network packets, file inputs, and external data from untrusted sources. \
 Taint sinks are program points that can use tainted data in an unsafe way, which directly exposes vulnerability under attack. \
-Taint propagators carry tainted information from input to the output without sanitization, and typically have non-primitive input and outputs. \
-Return the result as a json list with each object in the format:
+Taint propagators carry tainted information from input to output without sanitization. This includes cases where tainted data is \
+    passed through functions like sprintf, snprintf, or strcat, where one potentially unsafe argument is used to create another.
 
+[Things to note:]
+1. External APIs that extract fields from structures such as packet data (e.g., network packet headers, data payloads) are also treated as sources (e.g. GetVar, get_option), as they could potentially expose user-controlled data.
+2. Network-facing functions that handle client connections be treated as [sources] (e.g., listen_socket(), get_packet(), recv(), accept()), as they are the primary entry points for external untrusted input.
+3. Protocol parsing functions that process raw network data are typically sources or taint propagators, depending on whether they create new data or merely transform existing tainted data.
+
+Return the result as a json list with each object in the format:
 { "package": <package name>,
   "class": <class name>,
   "method": <method name>,
@@ -39,7 +46,7 @@ what are the functions that are potential source, sink, or taint-propagators to 
 Please analyze ALL provided methods for labeling, considering the broader context of {cwe_description} vulnerabilities \
 beyond just the specific example in the diff.
 
-Package,Class,Method,Signature
+Package,Class,Method,Signature,LocationCode
 {methods}
 """
 

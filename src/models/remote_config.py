@@ -4,5 +4,5 @@
 
 # remote_gpt_chatanywhere
 API_URL = "https://api.chatanywhere.tech/v1/chat/completions"
-API_KEY = "sk-IvAvgo355hpUt7fDM1wGU37UIfvZ55yIf9oNF5IEj5IpFy3u"
+API_KEY = "sk-3KhmaVW4PodX1oZySpEhcn5XpMJoznJx8qk1ufHHlHdTZpCj"
 

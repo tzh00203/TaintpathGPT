@@ -427,8 +427,12 @@ dependencies:
             external_api_candidates = external_api_candidates[possible_src_snk_tp]
 
             # 4. Keep only the core columns (package, class, function, signature) and deduplicate
-            external_api_candidates = external_api_candidates[["package", "clazz", "func", "full_signature"]].drop_duplicates()
+            external_api_candidates = external_api_candidates[["package", "clazz", "func", "full_signature", "location"]].drop_duplicates()
             num_candidates = len(external_api_candidates)
+            # 4.1 each location turn into the source code line of the API
+        
+            external_api_candidates['location_code'] = external_api_candidates['location'].apply(get_location_code_line)
+            external_api_candidates = external_api_candidates.drop(columns=['location'])
 
             # 5. Dump the filtered API candidates
             self.project_logger.info(f"  ==> #Relevant API Calls: {num_external_apis}, #Filtered Candidates: {num_candidates}")
@@ -635,8 +639,8 @@ dependencies:
         if not os.path.exists(self.llm_labelled_source_apis_path) or self.overwrite or self.overwrite_labelled_apis:
             # 1. Load the candidates
             candidates_csv = pd.read_csv(self.candidate_apis_csv_path, keep_default_na=False)
+            # candidates = [(row["package"], row["clazz"], row["func"], row["full_signature"], row["location_code"]) for (_, row) in candidates_csv.iterrows()]
             candidates = [(row["package"], row["clazz"], row["func"], row["full_signature"]) for (_, row) in candidates_csv.iterrows()]
-
             # 6. If the candidates are too many, exit
             if self.skip_huge_project and len(candidates) > self.skip_huge_project_num_apis_threshold:
                 self.project_logger.info("  ==> Skipping project due to it being too large...")
@@ -1082,8 +1086,8 @@ dependencies:
                 clazz=api["class"],
             )  if not self.language.startswith("c") else 
             ql_method_call_source_body_entry_tmp.format(method=api["method"])
-            for api in source_apis if api["method"].strip() in source_apis_flags and len(api["sink_args"]) >0 and
-                    len(api["package"]) >= 4
+            for api in source_apis if ( ( api["method"].strip() in source_apis_flags and not self.language.startswith("c") ) or self.language.startswith("c") )
+                     and len(api.get("sink_args", [])) >0
         ]
         ql_func_param_source_entry_tmp = QL_FUNC_PARAM_SOURCE_ENTRY if self.language == "java" else (
                 QL_FUNC_PARAM_SOURCE_ENTRY_PYTHON if self.language == "python" else (
@@ -1123,7 +1127,7 @@ dependencies:
                      param_func["method"].strip() in self.source_flags
                     )  or "java_4" in self.project_name or self.manual_rules is False or self.language.startswith("c")
         ]
-        # TODO: 不考虑external apis会作为source的情况
+        # TODO: 考虑external apis会作为source的情况, 在web场景需要通过外部api获取外参
         all_entries = source_api_entries + source_params_entries
         # all_entries = source_params_entries
         if len(all_entries) == 0:
@@ -1255,7 +1259,7 @@ dependencies:
                     ) and self.language == "python") or \
                     ( any(
                         len(re.findall(r"[\S\s]*p([0-9]+)", str(sink_arg))) > 0 or str(sink_arg) == "this"
-                        for sink_arg in api["sink_args"]
+                        for sink_arg in api.get("sink_args", [])
                     ) and (self.language == "java" or self.language.startswith("c"))):
                     ql_sink_body_entry_tmp = QL_SINK_BODY_ENTRY if self.language == "java" else (
                         QL_SINK_BODY_ENTRY_PYTHON_KIND1
